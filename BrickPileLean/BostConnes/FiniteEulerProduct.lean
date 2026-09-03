@@ -5,6 +5,8 @@ namespace BostConnes
 
 open scoped BigOperators
 
+noncomputable section
+
 /-- The local ratio `p^{-β}` appearing in the finite Euler factor. -/
 def localRatio (p : ℕ) (β : ℝ) : ℝ :=
   (p : ℝ) ^ (-β)
@@ -57,6 +59,8 @@ theorem separatedPartition_eq_finiteEulerProduct_of_prime
 @[simp] theorem finiteEulerProduct_empty (β : ℝ) :
     finiteEulerProduct ∅ β = 1 := by
   simp [finiteEulerProduct]
+
+end
 
 end BostConnes
 end BrickPileLean
