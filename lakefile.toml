@@ -1,0 +1,12 @@
+name = "BrickPileLean"
+version = "0.1.0"
+description = "Lean formalizations of finite-level Bost-Connes and related operator-algebraic results"
+defaultTargets = ["BrickPileLean"]
+
+[[require]]
+name = "mathlib"
+scope = "leanprover-community"
+rev = "v4.33.0"
+
+[[lean_lib]]
+name = "BrickPileLean"
