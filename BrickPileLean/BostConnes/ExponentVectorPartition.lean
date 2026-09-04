@@ -94,7 +94,7 @@ theorem exponentPartition_eq_separatedPartition
       exponentWeight S β k = finWeight r (E k) := by
     unfold exponentWeight finWeight
     rw [← e.prod_comp]
-    simp [r, E, Function.comp_def]
+    simp [r, E]
   calc
     exponentPartition S β
         = ∑' j : Fin (Fintype.card S) → ℕ, finWeight r j := by
@@ -104,9 +104,10 @@ theorem exponentPartition_eq_separatedPartition
     _ = ∏ i : Fin (Fintype.card S), ∑' m : ℕ, (r i) ^ m := hfin
     _ = ∏ p : S, ∑' m : ℕ, (localRatio p.1 β) ^ m := by
           rw [← e.prod_comp]
-          simp [r, Function.comp_def]
+          simp [r]
     _ = separatedPartition S β := by
-          simp [separatedPartition]
+          unfold separatedPartition
+          exact Finset.prod_coe_sort
 
 /-- Prime-indexed exponent-vector partition sum equals the finite Euler product. -/
 theorem exponentPartition_eq_finiteEulerProduct_of_prime
