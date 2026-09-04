@@ -36,7 +36,7 @@ private theorem finWeight_summable_and_tsum :
   | zero =>
       intro r hr0 hr1
       constructor
-      · simpa [finWeight] using (summable_single (default : Fin 0 → ℕ) (1 : ℝ))
+      · exact (hasSum_unique (finWeight r)).summable
       · simp [finWeight]
   | succ n ih =>
       intro r hr0 hr1
@@ -89,7 +89,7 @@ theorem exponentPartition_eq_separatedPartition
     exact hS (e.symm i).1 (e.symm i).2
   have hfin := (finWeight_summable_and_tsum (Fintype.card S) r hr0 hr1).2
   let E : (S → ℕ) ≃ (Fin (Fintype.card S) → ℕ) :=
-    Equiv.piCongrLeft' (fun _ : Fin (Fintype.card S) ↦ ℕ) e
+    Equiv.piCongrLeft' (fun _ : S ↦ ℕ) e
   have hweight (k : S → ℕ) :
       exponentWeight S β k = finWeight r (E k) := by
     unfold exponentWeight finWeight
