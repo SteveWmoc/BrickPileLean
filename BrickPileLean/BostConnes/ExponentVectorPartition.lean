@@ -107,7 +107,8 @@ theorem exponentPartition_eq_separatedPartition
           simp [r]
     _ = separatedPartition S β := by
           unfold separatedPartition
-          exact Finset.prod_coe_sort
+          exact Finset.prod_coe_sort S
+            (fun p : ℕ ↦ ∑' m : ℕ, (localRatio p β) ^ m)
 
 /-- Prime-indexed exponent-vector partition sum equals the finite Euler product. -/
 theorem exponentPartition_eq_finiteEulerProduct_of_prime
