@@ -1,1 +1,2 @@
 import BrickPileLean.BostConnes.FiniteEulerProduct
+import BrickPileLean.BostConnes.ExponentVectorPartition
