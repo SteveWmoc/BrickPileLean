@@ -71,7 +71,7 @@ def exponentVectorEquivFinitePrimeSemigroup
   invFun n := Classical.choose n.2
   left_inv k := by
     apply semigroupElement_injective hS
-    exact (Classical.choose_spec ((show (semigroupElement S k) ∈ finitePrimeSemigroup S from ⟨k, rfl⟩))).symm
+    exact Classical.choose_spec ((show (semigroupElement S k) ∈ finitePrimeSemigroup S from ⟨k, rfl⟩))
   right_inv n := by
     apply Subtype.ext
     exact Classical.choose_spec n.2
