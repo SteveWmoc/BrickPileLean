@@ -1,2 +1,3 @@
 import BrickPileLean.BostConnes.FiniteEulerProduct
 import BrickPileLean.BostConnes.ExponentVectorPartition
+import BrickPileLean.BostConnes.FinitePrimeSemigroup
