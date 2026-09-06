@@ -25,7 +25,7 @@ private theorem semigroupElement_ne_zero
     {S : Finset ℕ} (hS : ∀ p ∈ S, Nat.Prime p) (k : ExponentVector S) :
     semigroupElement S k ≠ 0 := by
   unfold semigroupElement
-  exact Finset.prod_ne_zero fun p _ ↦ pow_ne_zero _ (hS p.1 p.2).ne_zero
+  exact Finset.prod_ne_zero_iff.2 fun p _ ↦ pow_ne_zero _ (hS p.1 p.2).ne_zero
 
 /-- Prime factorization recovers each coordinate of an exponent vector. -/
 theorem semigroupElement_factorization
