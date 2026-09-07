@@ -17,13 +17,22 @@ theorem exponentWeight_eq_semigroupElement_rpow
     exponentWeight S β k = (semigroupElement S k : ℝ) ^ (-β) := by
   unfold exponentWeight semigroupElement localRatio
   rw [Nat.cast_prod]
-  rw [Real.prod_rpow]
-  apply Finset.prod_congr rfl
-  intro p hp
-  rw [Nat.cast_pow, Real.rpow_natCast]
-  rw [← Real.rpow_mul (Nat.cast_nonneg p.1)]
-  congr 1
-  ring
+  simp_rw [Nat.cast_pow]
+  calc
+    (∏ p : S, ((p.1 : ℝ) ^ (-β)) ^ k p)
+        = ∏ p : S, ((p.1 : ℝ) ^ k p) ^ (-β) := by
+            apply Finset.prod_congr rfl
+            intro p hp
+            rw [← Real.rpow_mul_natCast (Nat.cast_nonneg p.1)]
+            rw [← Real.rpow_natCast_mul (Nat.cast_nonneg p.1)]
+            congr 1
+            ring
+    _ = (∏ p : S, (p.1 : ℝ) ^ k p) ^ (-β) := by
+          simpa using
+            (Real.finsetProd_rpow (Finset.univ : Finset S)
+              (fun p : S ↦ (p.1 : ℝ) ^ k p)
+              (fun p _ ↦ pow_nonneg (Nat.cast_nonneg p.1) _)
+              (-β))
 
 /-- For a finite set of primes, the exponent-vector partition is the literal sum over `Λ_S`. -/
 theorem exponentPartition_eq_lambdaPartition
@@ -48,8 +57,8 @@ theorem lambdaPartition_eq_finiteEulerProduct_of_prime
 @[simp] theorem lambdaPartition_empty (β : ℝ) :
     lambdaPartition ∅ β = 1 := by
   have hprime : ∀ p ∈ (∅ : Finset ℕ), Nat.Prime p := by simp
-  rw [lambdaPartition_eq_finiteEulerProduct_of_prime hprime]
-  simp
+  rw [← exponentPartition_eq_lambdaPartition hprime β]
+  exact exponentPartition_empty β
 
 end
 
