@@ -21,7 +21,8 @@ theorem finitePrimeSemigroup_coe_pos
     {S : Finset ℕ} (hS : ∀ p ∈ S, Nat.Prime p)
     (n : finitePrimeSemigroup S) :
     0 < (n : ℕ) := by
-  rcases n.2 with ⟨k, rfl⟩
+  rcases n.2 with ⟨k, hk⟩
+  rw [← hk]
   unfold semigroupElement
   apply Finset.prod_pos
   intro p hp
@@ -69,16 +70,19 @@ def shiftIsometry
     (m n : finitePrimeSemigroup S) (z : ℂ) :
     shiftIsometry hS m (lp.single 2 n z) = lp.single 2 (m * n) z := by
   classical
-  simpa [shiftIsometry, basisVector, Orthonormal.orthogonalFamily] using
-    (((shiftedBasis_orthonormal hS m).orthogonalFamily).linearIsometry_apply_single
-      (i := n) z)
+  change
+    ((shiftedBasis_orthonormal hS m).orthogonalFamily).linearIsometry
+      (lp.single 2 n z) = lp.single 2 (m * n) z
+  rw [OrthogonalFamily.linearIsometry_apply_single]
+  ext k
+  simp [Orthonormal.orthogonalFamily, basisVector, lp.single_apply, Pi.single_apply]
 
 /-- In particular, `V_m e_n = e_{mn}`. -/
 @[simp] theorem shiftIsometry_basisVector
     {S : Finset ℕ} (hS : ∀ p ∈ S, Nat.Prime p)
     (m n : finitePrimeSemigroup S) :
     shiftIsometry hS m (basisVector S n) = basisVector S (m * n) := by
-  simpa [basisVector] using shiftIsometry_single hS m n (1 : ℂ)
+  simp [basisVector]
 
 /-- Multiplicative shifts compose according to multiplication in `Λ_S`. -/
 theorem shiftIsometry_mul
@@ -87,8 +91,8 @@ theorem shiftIsometry_mul
     (shiftIsometry hS m).toContinuousLinearMap.comp
         (shiftIsometry hS n).toContinuousLinearMap =
       (shiftIsometry hS (m * n)).toContinuousLinearMap := by
-  apply lp.ext_continuousLinearMap (p := (2 : ℝ≥0∞)) (by norm_num)
-  intro k z
+  refine lp.ext_continuousLinearMap (ENNReal.ofNat_ne_top (n := nat_lit 2)) fun k => ?_
+  ext z
   simp [mul_assoc]
 
 end
