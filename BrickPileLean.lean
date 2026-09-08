@@ -2,3 +2,4 @@ import BrickPileLean.BostConnes.FiniteEulerProduct
 import BrickPileLean.BostConnes.ExponentVectorPartition
 import BrickPileLean.BostConnes.FinitePrimeSemigroup
 import BrickPileLean.BostConnes.LambdaPartition
+import BrickPileLean.BostConnes.FiniteHilbertShift
