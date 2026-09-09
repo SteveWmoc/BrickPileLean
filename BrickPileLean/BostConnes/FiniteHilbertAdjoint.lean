@@ -34,7 +34,8 @@ theorem shiftAdjoint_comp_shift
     (m : finitePrimeSemigroup S) :
     (shiftAdjoint hS m).comp (shiftOperator hS m) =
       ContinuousLinearMap.id ℂ (FiniteHilbertSpace S) := by
-  ext x
+  apply ContinuousLinearMap.ext
+  intro x
   apply ext_inner_left ℂ
   intro y
   change
@@ -81,8 +82,12 @@ theorem shiftAdjoint_basisVector_eq_zero_of_not_dvd
                 (shiftOperator hS m) (basisVector S k) (basisVector S n))
       _ = inner ℂ (basisVector S (m * k)) (basisVector S n) := by simp
       _ = 0 := by
-        simp [basisVector, hk]
-  simpa [basisVector] using hinner
+        unfold basisVector
+        rw [lp.inner_single_left, lp.single_apply, Pi.single_apply]
+        simp [hk]
+  unfold basisVector at hinner ⊢
+  rw [lp.inner_single_left] at hinner
+  simpa using hinner
 
 end
 
