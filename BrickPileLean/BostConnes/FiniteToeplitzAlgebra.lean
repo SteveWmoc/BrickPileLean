@@ -104,7 +104,7 @@ theorem primeShift_mem_finiteToeplitzAlgebra
     {S : Finset ℕ} (hS : ∀ p ∈ S, Nat.Prime p) (p : S) :
     shiftOperator hS (primeSemigroupElement S p) ∈ finiteToeplitzAlgebra hS := by
   apply StarSubalgebra.le_topologicalClosure
-  exact StarAlgebra.mem_adjoin_of_mem ⟨p, rfl⟩
+  exact StarAlgebra.subset_adjoin ℂ (primeShiftSet hS) ⟨p, rfl⟩
 
 /-- The identity operator belongs to the finite Toeplitz algebra. -/
 theorem one_mem_finiteToeplitzAlgebra
@@ -122,7 +122,7 @@ theorem shiftOperator_mem_finiteToeplitzAlgebra
     simpa [k] using finitePrimeSemigroup_eq_prod_primePowers hS m
   rw [hm]
   have hprod : ∀ t : Finset S,
-      shiftOperator hS (∏ p in t, (primeSemigroupElement S p) ^ k p) ∈
+      shiftOperator hS (t.prod fun p => (primeSemigroupElement S p) ^ k p) ∈
         finiteToeplitzAlgebra hS := by
     intro t
     induction t using Finset.induction_on with
