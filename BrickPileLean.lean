@@ -4,3 +4,4 @@ import BrickPileLean.BostConnes.FinitePrimeSemigroup
 import BrickPileLean.BostConnes.LambdaPartition
 import BrickPileLean.BostConnes.FiniteHilbertShift
 import BrickPileLean.BostConnes.FiniteHilbertAdjoint
+import BrickPileLean.BostConnes.FiniteToeplitzAlgebra
