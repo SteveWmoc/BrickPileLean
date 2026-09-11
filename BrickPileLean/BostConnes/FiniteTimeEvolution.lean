@@ -26,10 +26,12 @@ def timePhase {S : Finset ℕ} (t : ℝ) (n : finitePrimeSemigroup S) : ℂ :=
 theorem timePhase_add
     {S : Finset ℕ} (t u : ℝ) (n : finitePrimeSemigroup S) :
     timePhase (t + u) n = timePhase t n * timePhase u n := by
+  have h :
+      (t + u) * Real.log ((n : ℕ) : ℝ) =
+        t * Real.log ((n : ℕ) : ℝ) + u * Real.log ((n : ℕ) : ℝ) := by
+    ring
   unfold timePhase
-  rw [← Complex.exp_add]
-  congr 1
-  ring_nf
+  rw [h, Complex.ofReal_add, add_mul, Complex.exp_add]
 
 /-- The arithmetic phases are multiplicative on `Λ_S`. -/
 theorem timePhase_mul
@@ -43,17 +45,23 @@ theorem timePhase_mul
   unfold timePhase
   rw [show ((((m * n : finitePrimeSemigroup S) : ℕ) : ℝ)) =
       ((m : ℕ) : ℝ) * ((n : ℕ) : ℝ) by norm_num,
-    Real.log_mul hm hn, ← Complex.exp_add]
-  congr 1
-  ring_nf
+    Real.log_mul hm hn]
+  have h :
+      t * (Real.log ((m : ℕ) : ℝ) + Real.log ((n : ℕ) : ℝ)) =
+        t * Real.log ((m : ℕ) : ℝ) + t * Real.log ((n : ℕ) : ℝ) := by
+    ring
+  rw [h, Complex.ofReal_add, add_mul, Complex.exp_add]
 
 /-- Opposite times give reciprocal phases. -/
 @[simp] theorem timePhase_neg_mul_timePhase
     {S : Finset ℕ} (t : ℝ) (n : finitePrimeSemigroup S) :
     timePhase (-t) n * timePhase t n = 1 := by
+  have h :
+      (-t) * Real.log ((n : ℕ) : ℝ) + t * Real.log ((n : ℕ) : ℝ) = 0 := by
+    ring
   unfold timePhase
-  rw [← Complex.exp_add]
-  convert Complex.exp_zero using 1 <;> ring_nf
+  rw [← Complex.exp_add, ← add_mul, ← Complex.ofReal_add, h,
+    Complex.ofReal_zero, zero_mul, Complex.exp_zero]
 
 @[simp] theorem timePhase_mul_timePhase_neg
     {S : Finset ℕ} (t : ℝ) (n : finitePrimeSemigroup S) :
@@ -138,7 +146,8 @@ theorem ambientTimeEvolution_shift
       timePhase t m • shiftOperator hS m := by
   refine lp.ext_continuousLinearMap (ENNReal.ofNat_ne_top (n := nat_lit 2)) fun n => ?_
   ext z
-  simp [ambientTimeEvolution, shiftOperator, timePhase_mul hS, mul_assoc]
+  simp [ambientTimeEvolution, shiftOperator, timePhase_mul hS, mul_assoc,
+    lp.single_apply, Pi.single_apply]
 
 end
 
