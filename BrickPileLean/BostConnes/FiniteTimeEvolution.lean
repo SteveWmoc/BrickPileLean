@@ -1,5 +1,5 @@
 import BrickPileLean.BostConnes.FiniteToeplitzAlgebra
-import Mathlib.Analysis.SpecialFunctions.Complex.Exponential
+import Mathlib.Analysis.Complex.Exponential
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 namespace BrickPileLean
