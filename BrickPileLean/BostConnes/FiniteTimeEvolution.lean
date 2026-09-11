@@ -1,5 +1,6 @@
 import BrickPileLean.BostConnes.FiniteToeplitzAlgebra
 import Mathlib.Analysis.Complex.Exponential
+import Mathlib.Analysis.Complex.Trigonometric
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 namespace BrickPileLean
@@ -15,11 +16,20 @@ def timePhase {S : Finset ℕ} (t : ℝ) (n : finitePrimeSemigroup S) : ℂ :=
 
 @[simp] theorem norm_timePhase {S : Finset ℕ} (t : ℝ) (n : finitePrimeSemigroup S) :
     ‖timePhase t n‖ = 1 := by
-  simp [timePhase, Complex.norm_exp]
+  exact Complex.norm_exp_ofReal_mul_I (t * Real.log ((n : ℕ) : ℝ))
 
 @[simp] theorem timePhase_zero {S : Finset ℕ} (n : finitePrimeSemigroup S) :
     timePhase 0 n = 1 := by
-  simp [timePhase]
+  simp [timePhase, Complex.exp_zero]
+
+/-- Addition of times multiplies the corresponding phase factors. -/
+theorem timePhase_add
+    {S : Finset ℕ} (t u : ℝ) (n : finitePrimeSemigroup S) :
+    timePhase (t + u) n = timePhase t n * timePhase u n := by
+  unfold timePhase
+  rw [← Complex.exp_add]
+  congr 1
+  ring_nf
 
 /-- The arithmetic phases are multiplicative on `Λ_S`. -/
 theorem timePhase_mul
@@ -35,8 +45,7 @@ theorem timePhase_mul
       ((m : ℕ) : ℝ) * ((n : ℕ) : ℝ) by norm_num,
     Real.log_mul hm hn, ← Complex.exp_add]
   congr 1
-  push_cast
-  ring
+  ring_nf
 
 /-- Opposite times give reciprocal phases. -/
 @[simp] theorem timePhase_neg_mul_timePhase
@@ -44,9 +53,13 @@ theorem timePhase_mul
     timePhase (-t) n * timePhase t n = 1 := by
   unfold timePhase
   rw [← Complex.exp_add]
-  congr 1
-  push_cast
-  ring
+  convert Complex.exp_zero using 1 <;> ring_nf
+
+@[simp] theorem timePhase_mul_timePhase_neg
+    {S : Finset ℕ} (t : ℝ) (n : finitePrimeSemigroup S) :
+    timePhase t n * timePhase (-t) n = 1 := by
+  rw [mul_comm]
+  exact timePhase_neg_mul_timePhase t n
 
 /-- The phase-twisted canonical basis. -/
 def timedBasis (S : Finset ℕ) (t : ℝ) (n : finitePrimeSemigroup S) : FiniteHilbertSpace S :=
@@ -79,7 +92,7 @@ def timeIsometry (S : Finset ℕ) (t : ℝ) :
       lp.single 2 n (timePhase t n * z)
   rw [OrthogonalFamily.linearIsometry_apply_single]
   ext k
-  simp [Orthonormal.orthogonalFamily, timedBasis, lp.single_apply, Pi.single_apply, mul_comm]
+  simp [timedBasis, lp.single_apply, Pi.single_apply, mul_comm]
 
 /-- The bounded diagonal operator implementing time `t`. -/
 def timeOperator (S : Finset ℕ) (t : ℝ) : FiniteOperator S :=
@@ -104,17 +117,14 @@ theorem timeOperator_neg_comp_timeOperator (S : Finset ℕ) (t : ℝ) :
       ContinuousLinearMap.id ℂ (FiniteHilbertSpace S) := by
   refine lp.ext_continuousLinearMap (ENNReal.ofNat_ne_top (n := nat_lit 2)) fun n => ?_
   ext z
-  simp [mul_assoc]
+  simp
 
-/-- `U_t` is a one-parameter group on the canonical basis. -/
+/-- `U_t` is a one-parameter group. -/
 theorem timeOperator_add (S : Finset ℕ) (t u : ℝ) :
-    (timeOperator S (t + u)) = (timeOperator S t).comp (timeOperator S u) := by
+    timeOperator S (t + u) = (timeOperator S t).comp (timeOperator S u) := by
   refine lp.ext_continuousLinearMap (ENNReal.ofNat_ne_top (n := nat_lit 2)) fun n => ?_
   ext z
-  simp [timePhase, ← Complex.exp_add]
-  congr 1
-  push_cast
-  ring
+  simp [timePhase_add]
 
 /-- Conjugation by the diagonal time operators on the ambient bounded-operator algebra. -/
 def ambientTimeEvolution (S : Finset ℕ) (t : ℝ) (a : FiniteOperator S) : FiniteOperator S :=
@@ -128,8 +138,7 @@ theorem ambientTimeEvolution_shift
       timePhase t m • shiftOperator hS m := by
   refine lp.ext_continuousLinearMap (ENNReal.ofNat_ne_top (n := nat_lit 2)) fun n => ?_
   ext z
-  simp [ambientTimeEvolution, ContinuousLinearMap.mul_apply,
-    timePhase_mul hS, mul_assoc]
+  simp [ambientTimeEvolution, shiftOperator, timePhase_mul hS, mul_assoc]
 
 end
 
