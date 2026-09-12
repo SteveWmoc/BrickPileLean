@@ -13,12 +13,14 @@ def timeLinearIsometryEquiv (S : Finset ℕ) (t : ℝ) :
     (timeIsometry S t)
     (timeIsometry S (-t)).toLinearMap
     (by
-      ext x
+      apply LinearMap.ext
+      intro x
       have h := congrArg (fun f : FiniteOperator S => f x)
         (timeOperator_neg_comp_timeOperator S (-t))
       simpa [timeOperator] using h)
     (by
-      ext x
+      apply LinearMap.ext
+      intro x
       have h := congrArg (fun f : FiniteOperator S => f x)
         (timeOperator_neg_comp_timeOperator S t)
       simpa [timeOperator] using h)
@@ -58,7 +60,14 @@ theorem continuous_ambientTimeStarAlgEquiv (S : Finset ℕ) (t : ℝ) :
   have h : Continuous (fun a : FiniteOperator S =>
       timeOperator S t * a * timeOperator S (-t)) :=
     (continuous_const.mul continuous_id).mul continuous_const
-  simpa [ambientTimeStarAlgEquiv_apply, ambientTimeEvolution] using h
+  change Continuous (fun a : FiniteOperator S => ambientTimeStarAlgEquiv S t a)
+  have heq :
+      (fun a : FiniteOperator S => ambientTimeStarAlgEquiv S t a) =
+        fun a : FiniteOperator S => timeOperator S t * a * timeOperator S (-t) := by
+    funext a
+    exact ambientTimeStarAlgEquiv_apply t a
+  rw [heq]
+  exact h
 
 /-- Conjugation by `U_t` preserves the finite Toeplitz algebra. -/
 theorem ambientTimeStarAlgEquiv_map_finiteToeplitz_le
