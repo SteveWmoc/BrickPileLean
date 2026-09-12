@@ -6,3 +6,4 @@ import BrickPileLean.BostConnes.FiniteHilbertShift
 import BrickPileLean.BostConnes.FiniteHilbertAdjoint
 import BrickPileLean.BostConnes.FiniteToeplitzAlgebra
 import BrickPileLean.BostConnes.FiniteTimeEvolution
+import BrickPileLean.BostConnes.FiniteToeplitzDynamics
