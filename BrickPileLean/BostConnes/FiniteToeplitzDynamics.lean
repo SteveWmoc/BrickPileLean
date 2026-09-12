@@ -44,7 +44,8 @@ def timeLinearIsometryEquiv (S : Finset ℕ) (t : ℝ) :
 theorem timeLinearIsometryEquiv_add (S : Finset ℕ) (t u : ℝ) :
     timeLinearIsometryEquiv S (t + u) =
       (timeLinearIsometryEquiv S u).trans (timeLinearIsometryEquiv S t) := by
-  ext x
+  apply LinearIsometryEquiv.ext
+  intro x
   have h := congrArg (fun f : FiniteOperator S => f x) (timeOperator_add S t u)
   simpa [timeOperator] using h
 
@@ -66,7 +67,10 @@ def ambientTimeStarAlgEquiv (S : Finset ℕ) (t : ℝ) :
 theorem ambientTimeStarAlgEquiv_add (S : Finset ℕ) (t u : ℝ) :
     ambientTimeStarAlgEquiv S (t + u) =
       (ambientTimeStarAlgEquiv S u).trans (ambientTimeStarAlgEquiv S t) := by
-  rw [ambientTimeStarAlgEquiv, timeLinearIsometryEquiv_add,
+  change (timeLinearIsometryEquiv S (t + u)).conjStarAlgEquiv =
+    (timeLinearIsometryEquiv S u).conjStarAlgEquiv.trans
+      (timeLinearIsometryEquiv S t).conjStarAlgEquiv
+  rw [timeLinearIsometryEquiv_add,
     LinearIsometryEquiv.conjStarAlgEquiv_trans]
 
 /-- The ambient time automorphism is norm-topology continuous. -/
