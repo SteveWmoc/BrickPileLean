@@ -40,6 +40,14 @@ def timeLinearIsometryEquiv (S : Finset ℕ) (t : ℝ) :
   ext x
   simp
 
+/-- The isometric equivalences form the expected one-parameter group. -/
+theorem timeLinearIsometryEquiv_add (S : Finset ℕ) (t u : ℝ) :
+    timeLinearIsometryEquiv S (t + u) =
+      (timeLinearIsometryEquiv S u).trans (timeLinearIsometryEquiv S t) := by
+  ext x
+  have h := congrArg (fun f : FiniteOperator S => f x) (timeOperator_add S t u)
+  simpa [timeOperator] using h
+
 /-- Conjugation by `U_t` as a star-algebra automorphism of all bounded operators. -/
 def ambientTimeStarAlgEquiv (S : Finset ℕ) (t : ℝ) :
     FiniteOperator S ≃⋆ₐ[ℂ] FiniteOperator S :=
@@ -53,6 +61,13 @@ def ambientTimeStarAlgEquiv (S : Finset ℕ) (t : ℝ) :
 @[simp] theorem ambientTimeStarAlgEquiv_symm (S : Finset ℕ) (t : ℝ) :
     (ambientTimeStarAlgEquiv S t).symm = ambientTimeStarAlgEquiv S (-t) := by
   simp [ambientTimeStarAlgEquiv]
+
+/-- The ambient automorphisms form the same one-parameter group. -/
+theorem ambientTimeStarAlgEquiv_add (S : Finset ℕ) (t u : ℝ) :
+    ambientTimeStarAlgEquiv S (t + u) =
+      (ambientTimeStarAlgEquiv S u).trans (ambientTimeStarAlgEquiv S t) := by
+  rw [ambientTimeStarAlgEquiv, timeLinearIsometryEquiv_add,
+    LinearIsometryEquiv.conjStarAlgEquiv_trans]
 
 /-- The ambient time automorphism is norm-topology continuous. -/
 theorem continuous_ambientTimeStarAlgEquiv (S : Finset ℕ) (t : ℝ) :
@@ -148,6 +163,19 @@ def finiteTimeEvolution
     ((finiteTimeEvolution hS t a : finiteToeplitzAlgebra hS) : FiniteOperator S) =
       ambientTimeEvolution S t a := by
   rfl
+
+/-- The restricted time evolution is a one-parameter group of star-algebra automorphisms. -/
+theorem finiteTimeEvolution_add
+    {S : Finset ℕ} (hS : ∀ p ∈ S, Nat.Prime p) (t u : ℝ) :
+    finiteTimeEvolution hS (t + u) =
+      (finiteTimeEvolution hS u).trans (finiteTimeEvolution hS t) := by
+  apply StarAlgEquiv.ext
+  intro a
+  apply Subtype.ext
+  have h := congrArg
+    (fun e : FiniteOperator S ≃⋆ₐ[ℂ] FiniteOperator S => e (a : FiniteOperator S))
+    (ambientTimeStarAlgEquiv_add S t u)
+  simpa using h
 
 /-- The restricted evolution has the expected action on every semigroup shift. -/
 theorem finiteTimeEvolution_shift
