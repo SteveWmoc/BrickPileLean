@@ -43,7 +43,9 @@ theorem lambdaWeight_summable
   have hexp : Summable (exponentWeight S β) :=
     exponentWeight_summable (fun p hp ↦ (hS p hp).one_lt) hβ
   rw [← e.summable_iff]
-  simpa [Function.comp_def, e, exponentWeight_eq_semigroupElement_rpow] using hexp
+  refine hexp.congr ?_
+  intro k
+  simpa [e] using exponentWeight_eq_semigroupElement_rpow k β
 
 /-- For a finite set of primes, the exponent-vector partition is the literal sum over `Λ_S`. -/
 theorem exponentPartition_eq_lambdaPartition
