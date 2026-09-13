@@ -112,7 +112,7 @@ theorem gibbsOperatorTerm_summable
   calc
     ‖((gibbsWeight β n : ℝ) : ℂ) • basisProjection S n‖
         ≤ ‖((gibbsWeight β n : ℝ) : ℂ)‖ * ‖basisProjection S n‖ :=
-          norm_smul_le _ _
+          (basisProjection S n).opNorm_smul_le (((gibbsWeight β n : ℝ) : ℂ))
     _ = gibbsWeight β n := by
           simp [gibbsWeight_nonneg]
 
