@@ -106,10 +106,15 @@ theorem gibbsOperatorTerm_summable
     {S : Finset ℕ} {β : ℝ}
     (hS : ∀ p ∈ S, Nat.Prime p) (hβ : 0 < β) :
     Summable (gibbsOperatorTerm (S := S) β) := by
-  apply Summable.of_norm
-  refine (gibbsWeight_summable hS hβ).congr ?_
+  refine Summable.of_norm_bounded (gibbsWeight_summable hS hβ) ?_
   intro n
-  simp [gibbsOperatorTerm, norm_smul, gibbsWeight_nonneg]
+  unfold gibbsOperatorTerm
+  calc
+    ‖((gibbsWeight β n : ℝ) : ℂ) • basisProjection S n‖
+        ≤ ‖((gibbsWeight β n : ℝ) : ℂ)‖ * ‖basisProjection S n‖ :=
+          norm_smul_le _ _
+    _ = gibbsWeight β n := by
+          simp [gibbsWeight_nonneg]
 
 /-- The diagonal Gibbs operator `D_β = Σ n^{-β} |e_n⟩⟨e_n|`. -/
 def gibbsOperator (S : Finset ℕ) (β : ℝ) : FiniteOperator S :=
@@ -145,6 +150,7 @@ theorem gibbsOperator_basisVector
   rw [hmap]
   rw [tsum_eq_single m]
   · simp [gibbsOperatorTerm, basisProjection_apply_basisVector]
+    rfl
   · intro n hnm
     simp [gibbsOperatorTerm, basisProjection_apply_basisVector, hnm]
 
