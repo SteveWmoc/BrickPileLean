@@ -1,6 +1,5 @@
 import BrickPileLean.BostConnes.FiniteToeplitzDynamics
 import Mathlib.Analysis.InnerProductSpace.LinearMap
-import Mathlib.Topology.Algebra.InfiniteSum.ContinuousEval
 
 namespace BrickPileLean
 namespace BostConnes
@@ -115,6 +114,22 @@ theorem gibbsOperatorTerm_summable
 def gibbsOperator (S : Finset ℕ) (β : ℝ) : FiniteOperator S :=
   ∑' n : finitePrimeSemigroup S, gibbsOperatorTerm β n
 
+/-- Evaluation of bounded operators at a fixed vector, as a continuous linear map. -/
+def operatorEval (S : Finset ℕ) (x : FiniteHilbertSpace S) :
+    FiniteOperator S →L[ℂ] FiniteHilbertSpace S :=
+  LinearMap.mkContinuous
+    { toFun := fun T => T x
+      map_add' := by intro T U; simp
+      map_smul' := by intro c T; simp }
+    ‖x‖
+    (fun T => by
+      simpa [mul_comm] using T.le_opNorm x)
+
+@[simp] theorem operatorEval_apply
+    (S : Finset ℕ) (x : FiniteHilbertSpace S) (T : FiniteOperator S) :
+    operatorEval S x T = T x :=
+  rfl
+
 /-- The Gibbs operator has the expected diagonal action on the canonical basis. -/
 theorem gibbsOperator_basisVector
     {S : Finset ℕ} {β : ℝ}
@@ -122,8 +137,10 @@ theorem gibbsOperator_basisVector
     (m : finitePrimeSemigroup S) :
     gibbsOperator S β (basisVector S m) =
       ((gibbsWeight β m : ℝ) : ℂ) • basisVector S m := by
-  unfold gibbsOperator
-  rw [tsum_apply (gibbsOperatorTerm_summable hS hβ) (basisVector S m)]
+  have hs := gibbsOperatorTerm_summable hS hβ
+  have hmap := (operatorEval S (basisVector S m)).map_tsum hs
+  change operatorEval S (basisVector S m) (gibbsOperator S β) = _
+  rw [hmap]
   rw [tsum_eq_single m]
   · simp [gibbsOperatorTerm, basisProjection_apply_basisVector]
   · intro n hnm
