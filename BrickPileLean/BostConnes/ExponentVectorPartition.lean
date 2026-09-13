@@ -75,6 +75,29 @@ private theorem finWeight_summable_and_tsum :
           _ = ∏ i : Fin (n + 1), ∑' m : ℕ, (r i) ^ m := by
                 rw [Fin.prod_univ_succ]
 
+/-- The finite-prime Boltzmann weights are summable for positive inverse temperature. -/
+theorem exponentWeight_summable
+    {S : Finset ℕ} {β : ℝ}
+    (hS : ∀ p ∈ S, 1 < p) (hβ : 0 < β) :
+    Summable (exponentWeight S β) := by
+  let e : S ≃ Fin (Fintype.card S) := Fintype.equivFin S
+  let r : Fin (Fintype.card S) → ℝ := fun i ↦ localRatio (e.symm i).1 β
+  have hr0 : ∀ i, 0 ≤ r i := fun i ↦ localRatio_nonneg _ _
+  have hr1 : ∀ i, r i < 1 := by
+    intro i
+    apply localRatio_lt_one (hβ := hβ)
+    exact hS (e.symm i).1 (e.symm i).2
+  have hfin := (finWeight_summable_and_tsum (Fintype.card S) r hr0 hr1).1
+  let E : (S → ℕ) ≃ (Fin (Fintype.card S) → ℕ) :=
+    Equiv.piCongrLeft' (fun _ : S ↦ ℕ) e
+  have hweight (k : S → ℕ) :
+      exponentWeight S β k = finWeight r (E k) := by
+    unfold exponentWeight finWeight
+    rw [← e.prod_comp]
+    simp [r, E]
+  rw [← E.symm.summable_iff]
+  simpa [Function.comp_def, hweight] using hfin
+
 /-- The exponent-vector sum is the product of its independent one-prime sums. -/
 theorem exponentPartition_eq_separatedPartition
     {S : Finset ℕ} {β : ℝ}
