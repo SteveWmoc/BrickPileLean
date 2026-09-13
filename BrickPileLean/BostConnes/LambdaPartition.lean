@@ -34,6 +34,19 @@ theorem exponentWeight_eq_semigroupElement_rpow
               (fun p _ ↦ pow_nonneg (Nat.cast_nonneg p.1) _)
               (-β))
 
+/-- The Gibbs weights `n^{-β}` on `Λ_S` are summable for positive inverse temperature. -/
+theorem lambdaWeight_summable
+    {S : Finset ℕ} {β : ℝ}
+    (hS : ∀ p ∈ S, Nat.Prime p) (hβ : 0 < β) :
+    Summable (fun n : finitePrimeSemigroup S => (n.1 : ℝ) ^ (-β)) := by
+  let e := exponentVectorEquivFinitePrimeSemigroup S hS
+  have hexp : Summable (exponentWeight S β) :=
+    exponentWeight_summable (fun p hp ↦ (hS p hp).one_lt) hβ
+  rw [← e.summable_iff]
+  refine hexp.congr ?_
+  intro k
+  simpa [e] using exponentWeight_eq_semigroupElement_rpow k β
+
 /-- For a finite set of primes, the exponent-vector partition is the literal sum over `Λ_S`. -/
 theorem exponentPartition_eq_lambdaPartition
     {S : Finset ℕ} (hS : ∀ p ∈ S, Nat.Prime p) (β : ℝ) :
