@@ -51,6 +51,42 @@ def leftMulEquivMultiples
     apply Subtype.ext
     exact (Classical.choose_spec k.2).symm
 
+/-- The `0/1` coefficient recording whether `m` divides `k`. -/
+def divisibilityCoefficient
+    {S : Finset ℕ} (m k : finitePrimeSemigroup S) : ℂ :=
+  @ite ℂ (m ∣ k) (Classical.propDecidable _) 1 0
+
+@[simp] theorem divisibilityCoefficient_of_dvd
+    {S : Finset ℕ} {m k : finitePrimeSemigroup S} (h : m ∣ k) :
+    divisibilityCoefficient m k = 1 := by
+  unfold divisibilityCoefficient
+  rw [if_pos h]
+
+@[simp] theorem divisibilityCoefficient_of_not_dvd
+    {S : Finset ℕ} {m k : finitePrimeSemigroup S} (h : ¬ m ∣ k) :
+    divisibilityCoefficient m k = 0 := by
+  unfold divisibilityCoefficient
+  rw [if_neg h]
+
+/-- The normalized Gibbs weight restricted to multiples of `m`. -/
+def gibbsMultipleProbabilityWeight
+    (S : Finset ℕ) (β : ℝ)
+    (m k : finitePrimeSemigroup S) : ℝ :=
+  @ite ℝ (m ∣ k) (Classical.propDecidable _)
+    (gibbsProbabilityWeight S β k) 0
+
+@[simp] theorem gibbsMultipleProbabilityWeight_of_dvd
+    {S : Finset ℕ} {β : ℝ} {m k : finitePrimeSemigroup S} (h : m ∣ k) :
+    gibbsMultipleProbabilityWeight S β m k = gibbsProbabilityWeight S β k := by
+  unfold gibbsMultipleProbabilityWeight
+  rw [if_pos h]
+
+@[simp] theorem gibbsMultipleProbabilityWeight_of_not_dvd
+    {S : Finset ℕ} {β : ℝ} {m k : finitePrimeSemigroup S} (h : ¬ m ∣ k) :
+    gibbsMultipleProbabilityWeight S β m k = 0 := by
+  unfold gibbsMultipleProbabilityWeight
+  rw [if_neg h]
+
 /-- One term in the Gibbs expectation of a bounded operator. -/
 def gibbsExpectationTerm
     (S : Finset ℕ) (β : ℝ) (a : FiniteOperator S)
@@ -76,10 +112,9 @@ theorem gibbsExpectationTerm_summable
       ‖inner ℂ (basisVector S k) (a (basisVector S k))‖ ≤
           ‖basisVector S k‖ * ‖a (basisVector S k)‖ :=
         norm_inner_le_norm _ _
-      _ ≤ 1 * (‖a‖ * 1) := by
+      _ ≤ ‖basisVector S k‖ * (‖a‖ * ‖basisVector S k‖) := by
         gcongr
-        · simp
-        · exact a.le_opNorm (basisVector S k)
+        exact a.le_opNorm (basisVector S k)
       _ = ‖a‖ := by simp
   calc
     ‖gibbsExpectationTerm S β a k‖ =
@@ -115,15 +150,23 @@ theorem toeplitzMonomial_diagonal_self
     (m k : finitePrimeSemigroup S) :
     inner ℂ (basisVector S k)
         (toeplitzMonomial hS m m (basisVector S k)) =
-      if m ∣ k then 1 else 0 := by
-  classical
+      divisibilityCoefficient m k := by
   by_cases hmk : m ∣ k
   · rcases hmk with ⟨r, rfl⟩
-    simp [toeplitzMonomial, basisVector, lp.inner_single_left,
-      lp.single_apply, Pi.single_apply]
+    change inner ℂ (basisVector S (m * r))
+      (shiftOperator hS m
+        (shiftAdjoint hS m (basisVector S (m * r)))) = _
+    rw [shiftAdjoint_basisVector_mul, shiftOperator_basisVector]
+    rw [divisibilityCoefficient_of_dvd (show m ∣ m * r from ⟨r, rfl⟩)]
+    unfold basisVector
+    rw [lp.inner_single_left, lp.single_apply, Pi.single_apply]
+    simp
   · have hz : shiftAdjoint hS m (basisVector S k) = 0 :=
       shiftAdjoint_basisVector_eq_zero_of_not_dvd hS m k hmk
-    simp [toeplitzMonomial, hz, hmk]
+    change inner ℂ (basisVector S k)
+      (shiftOperator hS m (shiftAdjoint hS m (basisVector S k))) = _
+    rw [hz]
+    simp [divisibilityCoefficient_of_not_dvd hmk]
 
 /-- Off the diagonal `m = n`, every basis-diagonal coefficient of `V_m V_n*` vanishes. -/
 theorem toeplitzMonomial_diagonal_of_ne
@@ -132,35 +175,55 @@ theorem toeplitzMonomial_diagonal_of_ne
     (k : finitePrimeSemigroup S) :
     inner ℂ (basisVector S k)
         (toeplitzMonomial hS m n (basisVector S k)) = 0 := by
-  classical
   by_cases hnk : n ∣ k
   · rcases hnk with ⟨r, rfl⟩
     have hdiff : n * r ≠ m * r := by
       intro h
       apply hmn
       exact (rightMul_injective hS r) h.symm
-    simp [toeplitzMonomial, basisVector, lp.inner_single_left,
-      lp.single_apply, Pi.single_apply, hdiff]
+    change inner ℂ (basisVector S (n * r))
+      (shiftOperator hS m
+        (shiftAdjoint hS n (basisVector S (n * r)))) = 0
+    rw [shiftAdjoint_basisVector_mul, shiftOperator_basisVector]
+    unfold basisVector
+    rw [lp.inner_single_left, lp.single_apply, Pi.single_apply]
+    simp [hdiff]
   · have hz : shiftAdjoint hS n (basisVector S k) = 0 :=
       shiftAdjoint_basisVector_eq_zero_of_not_dvd hS n k hnk
-    simp [toeplitzMonomial, hz]
+    change inner ℂ (basisVector S k)
+      (shiftOperator hS m (shiftAdjoint hS n (basisVector S k))) = 0
+    rw [hz]
+    simp
 
 /-- The normalized Gibbs mass of the multiples of `m` is exactly `m^{-β}`. -/
-theorem tsum_gibbsProbabilityWeight_dvd
+theorem tsum_gibbsMultipleProbabilityWeight
     {S : Finset ℕ} {β : ℝ}
     (hS : ∀ p ∈ S, Nat.Prime p) (hβ : 0 < β)
     (m : finitePrimeSemigroup S) :
     (∑' k : finitePrimeSemigroup S,
-      if m ∣ k then gibbsProbabilityWeight S β k else 0) =
-      gibbsWeight β m := by
-  let M : Set (finitePrimeSemigroup S) := {k | m ∣ k}
+      gibbsMultipleProbabilityWeight S β m k) = gibbsWeight β m := by
   let e := leftMulEquivMultiples hS m
   calc
     (∑' k : finitePrimeSemigroup S,
-      if m ∣ k then gibbsProbabilityWeight S β k else 0) =
-        ∑' k : M, gibbsProbabilityWeight S β k.1 := by
-          have hsub := tsum_subtype M (gibbsProbabilityWeight S β)
-          simpa [M, Set.indicator] using hsub.symm
+      gibbsMultipleProbabilityWeight S β m k) =
+        ∑' k : {k : finitePrimeSemigroup S // m ∣ k},
+          gibbsProbabilityWeight S β k.1 := by
+            have hsub := tsum_subtype
+              {k : finitePrimeSemigroup S | m ∣ k}
+              (gibbsProbabilityWeight S β)
+            calc
+              (∑' k : finitePrimeSemigroup S,
+                gibbsMultipleProbabilityWeight S β m k) =
+                  ∑' k : finitePrimeSemigroup S,
+                    ({j : finitePrimeSemigroup S | m ∣ j}.indicator
+                      (gibbsProbabilityWeight S β)) k := by
+                        apply tsum_congr
+                        intro k
+                        by_cases hmk : m ∣ k
+                        · simp [gibbsMultipleProbabilityWeight_of_dvd hmk, hmk]
+                        · simp [gibbsMultipleProbabilityWeight_of_not_dvd hmk, hmk]
+              _ = ∑' k : {k : finitePrimeSemigroup S // m ∣ k},
+                    gibbsProbabilityWeight S β k.1 := hsub.symm
     _ = ∑' r : finitePrimeSemigroup S,
         gibbsProbabilityWeight S β (m * r) := by
           rw [← e.tsum_eq]
@@ -188,17 +251,23 @@ theorem gibbsExpectation_toeplitzMonomial_self
     (∑' k : finitePrimeSemigroup S,
       gibbsExpectationTerm S β (toeplitzMonomial hS m m) k) =
         ∑' k : finitePrimeSemigroup S,
-          (((if m ∣ k then gibbsProbabilityWeight S β k else 0 : ℝ)) : ℂ) := by
+          ((gibbsMultipleProbabilityWeight S β m k : ℝ) : ℂ) := by
             apply tsum_congr
             intro k
             unfold gibbsExpectationTerm
             rw [toeplitzMonomial_diagonal_self hS m k]
-            by_cases hmk : m ∣ k <;> simp [hmk]
+            by_cases hmk : m ∣ k
+            · rw [divisibilityCoefficient_of_dvd hmk,
+                gibbsMultipleProbabilityWeight_of_dvd hmk]
+              simp
+            · rw [divisibilityCoefficient_of_not_dvd hmk,
+                gibbsMultipleProbabilityWeight_of_not_dvd hmk]
+              simp
     _ = (((∑' k : finitePrimeSemigroup S,
-          if m ∣ k then gibbsProbabilityWeight S β k else 0) : ℝ) : ℂ) := by
+          gibbsMultipleProbabilityWeight S β m k) : ℝ) : ℂ) := by
             exact (Complex.ofReal_tsum _).symm
     _ = ((gibbsWeight β m : ℝ) : ℂ) := by
-          rw [tsum_gibbsProbabilityWeight_dvd hS hβ m]
+          rw [tsum_gibbsMultipleProbabilityWeight hS hβ m]
 
 /-- Off-diagonal Toeplitz monomials have zero Gibbs expectation. -/
 theorem gibbsExpectation_toeplitzMonomial_of_ne
@@ -207,11 +276,16 @@ theorem gibbsExpectation_toeplitzMonomial_of_ne
     {m n : finitePrimeSemigroup S} (hmn : m ≠ n) :
     gibbsExpectation S β (toeplitzMonomial hS m n) = 0 := by
   unfold gibbsExpectation
-  apply tsum_eq_zero
-  intro k
-  unfold gibbsExpectationTerm
-  rw [toeplitzMonomial_diagonal_of_ne hS hmn k]
-  simp
+  calc
+    (∑' k : finitePrimeSemigroup S,
+      gibbsExpectationTerm S β (toeplitzMonomial hS m n) k) =
+        ∑' _k : finitePrimeSemigroup S, (0 : ℂ) := by
+          apply tsum_congr
+          intro k
+          unfold gibbsExpectationTerm
+          rw [toeplitzMonomial_diagonal_of_ne hS hmn k]
+          simp
+    _ = 0 := by simp
 
 /-- The finite Gibbs expectation has the expected value on every Toeplitz monomial. -/
 theorem gibbsExpectation_toeplitzMonomial
@@ -222,7 +296,7 @@ theorem gibbsExpectation_toeplitzMonomial
       if m = n then ((gibbsWeight β m : ℝ) : ℂ) else 0 := by
   by_cases hmn : m = n
   · subst n
-    simp [hmn, gibbsExpectation_toeplitzMonomial_self hS hβ m]
+    simp [gibbsExpectation_toeplitzMonomial_self hS hβ m]
   · simp [hmn, gibbsExpectation_toeplitzMonomial_of_ne hS hβ hmn]
 
 end
