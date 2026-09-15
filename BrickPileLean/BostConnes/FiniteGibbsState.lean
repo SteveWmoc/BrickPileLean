@@ -17,7 +17,7 @@ theorem gibbsExpectation_add
     gibbsExpectation S β (a + b) =
       gibbsExpectation S β a + gibbsExpectation S β b := by
   unfold gibbsExpectation
-  rw [← tsum_add (gibbsExpectationTerm_summable hS hβ a)
+  rw [← Summable.tsum_add (gibbsExpectationTerm_summable hS hβ a)
     (gibbsExpectationTerm_summable hS hβ b)]
   apply tsum_congr
   intro k
@@ -106,7 +106,7 @@ theorem norm_gibbsExpectation_le
       norm_tsum_le_tsum_norm hnorm
     _ ≤ ∑' k : finitePrimeSemigroup S,
         gibbsProbabilityWeight S β k * ‖a‖ :=
-      hnorm.tsum_le_tsum hdom (norm_gibbsExpectationTerm_le hS hβ a)
+      hnorm.tsum_le_tsum (norm_gibbsExpectationTerm_le hS hβ a) hdom
     _ = (∑' k : finitePrimeSemigroup S,
         gibbsProbabilityWeight S β k) * ‖a‖ := by
       rw [tsum_mul_right]
@@ -146,7 +146,7 @@ theorem gibbsExpectation_nonneg
   unfold gibbsExpectationTerm
   apply mul_nonneg
   · exact Complex.zero_le_real.mpr (gibbsProbabilityWeight_nonneg hS hβ k)
-  · exact (ContinuousLinearMap.nonneg_iff_isPositive.mp ha).inner_nonneg_right
+  · exact ((ContinuousLinearMap.nonneg_iff_isPositive a).mp ha).inner_nonneg_right
       (basisVector S k)
 
 /-- The Gibbs expectation as a positive linear functional on all bounded operators. -/
@@ -222,7 +222,11 @@ theorem norm_finiteGibbsStateCLM
     simpa using norm_gibbsExpectation_le hS hβ (a : FiniteOperator S)
   · have h := (finiteGibbsStateCLM hS hβ).le_opNorm
       (1 : finiteToeplitzAlgebra hS)
-    simpa using h
+    have hone :
+        finiteGibbsStateCLM hS hβ (1 : finiteToeplitzAlgebra hS) = 1 := by
+      rw [finiteGibbsStateCLM_apply, finiteGibbsState_one]
+    rw [hone, norm_one, norm_one, mul_one] at h
+    exact h
 
 /-- The packaged state retains the Toeplitz-monomial expectation formula. -/
 theorem finiteGibbsState_toeplitzMonomial
