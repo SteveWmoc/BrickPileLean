@@ -220,12 +220,16 @@ theorem norm_finiteGibbsStateCLM
   · apply (finiteGibbsStateCLM hS hβ).opNorm_le_bound zero_le_one
     intro a
     simpa using norm_gibbsExpectation_le hS hβ (a : FiniteOperator S)
-  · have h := (finiteGibbsStateCLM hS hβ).le_opNorm
-      (1 : finiteToeplitzAlgebra hS)
-    have hone :
-        finiteGibbsStateCLM hS hβ (1 : finiteToeplitzAlgebra hS) = 1 := by
-      rw [finiteGibbsStateCLM_apply, finiteGibbsState_one]
-    rw [hone, norm_one, norm_one, mul_one] at h
+  · let oneA : finiteToeplitzAlgebra hS :=
+      ⟨(1 : FiniteOperator S), one_mem (finiteToeplitzAlgebra hS)⟩
+    have h := (finiteGibbsStateCLM hS hβ).le_opNorm oneA
+    have honeA : finiteGibbsStateCLM hS hβ oneA = 1 := by
+      change gibbsExpectation S β (1 : FiniteOperator S) = 1
+      exact gibbsExpectation_one hS hβ
+    have hnormA : ‖oneA‖ = 1 := by
+      change ‖(1 : FiniteOperator S)‖ = 1
+      exact norm_one
+    rw [honeA, norm_one, hnormA, mul_one] at h
     exact h
 
 /-- The packaged state retains the Toeplitz-monomial expectation formula. -/
