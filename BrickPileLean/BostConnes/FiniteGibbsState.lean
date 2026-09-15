@@ -226,9 +226,17 @@ theorem norm_finiteGibbsStateCLM
     have honeA : finiteGibbsStateCLM hS hβ oneA = 1 := by
       change gibbsExpectation S β (1 : FiniteOperator S) = 1
       exact gibbsExpectation_one hS hβ
+    have hnormAmbient : ‖(1 : FiniteOperator S)‖ = 1 := by
+      apply le_antisymm
+      · apply (1 : FiniteOperator S).opNorm_le_bound zero_le_one
+        intro x
+        simp
+      · have hid := (1 : FiniteOperator S).le_opNorm
+          (basisVector S (1 : finitePrimeSemigroup S))
+        simpa using hid
     have hnormA : ‖oneA‖ = 1 := by
       change ‖(1 : FiniteOperator S)‖ = 1
-      exact norm_one
+      exact hnormAmbient
     rw [honeA, norm_one, hnormA, mul_one] at h
     exact h
 
