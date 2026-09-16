@@ -10,3 +10,4 @@ import BrickPileLean.BostConnes.FiniteToeplitzDynamics
 import BrickPileLean.BostConnes.FiniteGibbsWeight
 import BrickPileLean.BostConnes.FiniteGibbsExpectation
 import BrickPileLean.BostConnes.FiniteGibbsState
+import BrickPileLean.BostConnes.FiniteToeplitzCore
