@@ -220,8 +220,8 @@ theorem tsum_gibbsMultipleProbabilityWeight
                         apply tsum_congr
                         intro k
                         by_cases hmk : m ∣ k
-                        · simp [gibbsMultipleProbabilityWeight_of_dvd hmk, hmk]
-                        · simp [gibbsMultipleProbabilityWeight_of_not_dvd hmk, hmk]
+                        · simp [hmk]
+                        · simp [hmk]
               _ = ∑' k : {k : finitePrimeSemigroup S // m ∣ k},
                     gibbsProbabilityWeight S β k.1 := hsub.symm
     _ = ∑' r : finitePrimeSemigroup S,
@@ -272,7 +272,7 @@ theorem gibbsExpectation_toeplitzMonomial_self
 /-- Off-diagonal Toeplitz monomials have zero Gibbs expectation. -/
 theorem gibbsExpectation_toeplitzMonomial_of_ne
     {S : Finset ℕ} {β : ℝ}
-    (hS : ∀ p ∈ S, Nat.Prime p) (hβ : 0 < β)
+    (hS : ∀ p ∈ S, Nat.Prime p) (_hβ : 0 < β)
     {m n : finitePrimeSemigroup S} (hmn : m ≠ n) :
     gibbsExpectation S β (toeplitzMonomial hS m n) = 0 := by
   unfold gibbsExpectation
