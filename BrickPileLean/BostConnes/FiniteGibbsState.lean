@@ -26,7 +26,7 @@ theorem gibbsExpectation_add
 /-- The Gibbs expectation is complex-linear at positive inverse temperature. -/
 theorem gibbsExpectation_smul
     {S : Finset ℕ} {β : ℝ}
-    (hS : ∀ p ∈ S, Nat.Prime p) (hβ : 0 < β)
+    (_hS : ∀ p ∈ S, Nat.Prime p) (_hβ : 0 < β)
     (c : ℂ) (a : FiniteOperator S) :
     gibbsExpectation S β (c • a) = c • gibbsExpectation S β a := by
   unfold gibbsExpectation
@@ -37,7 +37,7 @@ theorem gibbsExpectation_smul
           c * gibbsExpectationTerm S β a k := by
             apply tsum_congr
             intro k
-            simp [gibbsExpectationTerm, mul_assoc, mul_left_comm, mul_comm]
+            simp [gibbsExpectationTerm, mul_left_comm]
     _ = c * (∑' k : finitePrimeSemigroup S,
         gibbsExpectationTerm S β a k) := by
           rw [tsum_mul_left]

@@ -75,7 +75,7 @@ def shiftIsometry
       (lp.single 2 n z) = lp.single 2 (m * n) z
   rw [OrthogonalFamily.linearIsometry_apply_single]
   ext k
-  simp [Orthonormal.orthogonalFamily, basisVector, lp.single_apply, Pi.single_apply]
+  simp [basisVector, lp.single_apply, Pi.single_apply]
 
 /-- In particular, `V_m e_n = e_{mn}`. -/
 @[simp] theorem shiftIsometry_basisVector
