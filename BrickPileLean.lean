@@ -11,3 +11,4 @@ import BrickPileLean.BostConnes.FiniteGibbsWeight
 import BrickPileLean.BostConnes.FiniteGibbsExpectation
 import BrickPileLean.BostConnes.FiniteGibbsState
 import BrickPileLean.BostConnes.FiniteToeplitzCore
+import BrickPileLean.BostConnes.FiniteAnalyticMonomial
