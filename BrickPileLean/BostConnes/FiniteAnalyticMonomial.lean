@@ -20,10 +20,11 @@ def toeplitzMonomialComplexPhase
     {S : Finset ℕ} (t : ℝ) (n : finitePrimeSemigroup S) :
     star (timePhase t n) = timePhase (-t) n := by
   unfold timePhase
+  change (starRingEnd ℂ) (Complex.exp (↑(t * Real.log ↑↑n) * Complex.I)) =
+    Complex.exp (↑(-t * Real.log ↑↑n) * Complex.I)
   rw [← Complex.exp_conj]
   congr 1
   simp
-  ring
 
 /-- The complex-time phase restricts on the real axis to the expected monomial phase. -/
 theorem toeplitzMonomialComplexPhase_ofReal
@@ -40,22 +41,18 @@ theorem toeplitzMonomialComplexPhase_ofReal
 theorem toeplitzMonomialComplexPhase_mul_I
     {S : Finset ℕ} (β : ℝ) (m n : finitePrimeSemigroup S) :
     toeplitzMonomialComplexPhase ((β : ℂ) * Complex.I) m n =
-      Complex.exp (((-β * toeplitzMonomialFrequency m n : ℝ) : ℂ)) := by
+      Complex.exp (-((β : ℂ) * (toeplitzMonomialFrequency m n : ℂ))) := by
   unfold toeplitzMonomialComplexPhase
   congr 1
-  push_cast
   calc
     ((β : ℂ) * Complex.I) * Complex.I *
         (toeplitzMonomialFrequency m n : ℂ) =
-      (β : ℂ) * (Complex.I * Complex.I) *
-        (toeplitzMonomialFrequency m n : ℂ) := by
-          rw [mul_assoc]
-    _ = ((-β : ℝ) : ℂ) * (toeplitzMonomialFrequency m n : ℂ) := by
+      (β : ℂ) * (toeplitzMonomialFrequency m n : ℂ) *
+        (Complex.I * Complex.I) := by
+          ac_rfl
+    _ = -((β : ℂ) * (toeplitzMonomialFrequency m n : ℂ)) := by
           rw [Complex.I_mul_I]
           ring
-    _ = (((-β * toeplitzMonomialFrequency m n : ℝ) : ℂ)) := by
-          push_cast
-          rfl
 
 /-- The real-time evolution scales an adjoint shift by the opposite arithmetic phase. -/
 theorem ambientTimeEvolution_shiftAdjoint
@@ -68,7 +65,6 @@ theorem ambientTimeEvolution_shiftAdjoint
     ambientTimeStarAlgEquiv S t (shiftAdjoint hS m) =
         ambientTimeStarAlgEquiv S t (star (shiftOperator hS m)) := by
           congr 1
-          simp [shiftAdjoint, ContinuousLinearMap.star_eq_adjoint]
     _ = star (ambientTimeStarAlgEquiv S t (shiftOperator hS m)) := by
           rw [map_star]
     _ = star (timePhase t m • shiftOperator hS m) := by
@@ -87,7 +83,7 @@ theorem ambientTimeEvolution_toeplitzMonomial
   rw [map_mul]
   rw [ambientTimeStarAlgEquiv_apply, ambientTimeEvolution_shift]
   rw [ambientTimeStarAlgEquiv_apply, ambientTimeEvolution_shiftAdjoint]
-  rw [smul_mul_assoc, mul_smul, smul_smul]
+  rw [smul_mul_smul]
 
 /-- The restricted finite time evolution has the same monomial eigenvector formula. -/
 theorem finiteTimeEvolution_toeplitzMonomial
