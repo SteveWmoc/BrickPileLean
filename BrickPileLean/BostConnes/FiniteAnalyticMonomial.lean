@@ -20,11 +20,13 @@ def toeplitzMonomialComplexPhase
     {S : Finset ℕ} (t : ℝ) (n : finitePrimeSemigroup S) :
     star (timePhase t n) = timePhase (-t) n := by
   unfold timePhase
-  change (starRingEnd ℂ) (Complex.exp (↑(t * Real.log ↑↑n) * Complex.I)) =
+  change Complex.conj (Complex.exp (↑(t * Real.log ↑↑n) * Complex.I)) =
     Complex.exp (↑(-t * Real.log ↑↑n) * Complex.I)
   rw [← Complex.exp_conj]
   congr 1
-  simp
+  simp only [map_mul, Complex.conj_ofReal, Complex.conj_I]
+  push_cast
+  ring
 
 /-- The complex-time phase restricts on the real axis to the expected monomial phase. -/
 theorem toeplitzMonomialComplexPhase_ofReal
