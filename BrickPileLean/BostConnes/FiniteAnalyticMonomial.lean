@@ -3,6 +3,8 @@ import BrickPileLean.BostConnes.FiniteToeplitzCore
 namespace BrickPileLean
 namespace BostConnes
 
+open scoped ComplexConjugate
+
 noncomputable section
 
 /-- The logarithmic frequency attached to the Toeplitz monomial `V_m V_n*`. -/
@@ -20,7 +22,7 @@ def toeplitzMonomialComplexPhase
     {S : Finset ℕ} (t : ℝ) (n : finitePrimeSemigroup S) :
     star (timePhase t n) = timePhase (-t) n := by
   unfold timePhase
-  change Complex.conj (Complex.exp (↑(t * Real.log ↑↑n) * Complex.I)) =
+  change conj (Complex.exp (↑(t * Real.log ↑↑n) * Complex.I)) =
     Complex.exp (↑(-t * Real.log ↑↑n) * Complex.I)
   rw [← Complex.exp_conj]
   congr 1
