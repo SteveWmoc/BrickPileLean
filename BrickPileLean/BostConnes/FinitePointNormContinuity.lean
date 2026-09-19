@@ -3,6 +3,8 @@ import BrickPileLean.BostConnes.FiniteAnalyticMonomial
 namespace BrickPileLean
 namespace BostConnes
 
+open Filter
+
 noncomputable section
 
 /-- For fixed arithmetic state `n`, the real-time phase `t ↦ n^{it}` is continuous. -/
@@ -18,23 +20,24 @@ theorem continuous_ambientTimeEvolution_core
     (a : finiteToeplitzCore hS) :
     Continuous fun t : ℝ =>
       ambientTimeEvolution S t (a : FiniteOperator S) := by
-  induction a using StarAlgebra.adjoin_induction_subtype with
+  let a₀ : StarAlgebra.adjoin ℂ (primeShiftSet hS) := ⟨a.1, a.2⟩
+  change Continuous fun t : ℝ =>
+    ambientTimeStarAlgEquiv S t (a₀ : FiniteOperator S)
+  induction a₀ using StarAlgebra.adjoin_induction_subtype with
   | mem x hx =>
       rcases hx with ⟨p, rfl⟩
-      simp_rw [ambientTimeEvolution_shift hS]
+      simp_rw [ambientTimeStarAlgEquiv_apply, ambientTimeEvolution_shift hS]
       exact (continuous_timePhase (primeSemigroupElement S p)).smul continuous_const
   | algebraMap c =>
-      simp_rw [← ambientTimeStarAlgEquiv_apply, map_algebraMap]
-      exact continuous_const
+      simpa using
+        (continuous_const :
+          Continuous fun _ : ℝ => algebraMap ℂ (FiniteOperator S) c)
   | add x y hx hy =>
-      simpa only [← ambientTimeStarAlgEquiv_apply, map_add,
-        ambientTimeStarAlgEquiv_apply] using hx.add hy
+      simpa using hx.add hy
   | mul x y hx hy =>
-      simpa only [← ambientTimeStarAlgEquiv_apply, map_mul,
-        ambientTimeStarAlgEquiv_apply] using hx.mul hy
+      simpa using hx.mul hy
   | star x hx =>
-      simpa only [← ambientTimeStarAlgEquiv_apply, map_star,
-        ambientTimeStarAlgEquiv_apply] using hx.star
+      simpa using hx.star
 
 /-- Each ambient time automorphism preserves distances. -/
 theorem dist_ambientTimeEvolution
@@ -59,7 +62,11 @@ theorem continuous_ambientTimeEvolution_finiteToeplitz
   have ha_closure :
       (a : FiniteOperator S) ∈
         closure (finiteToeplitzCore hS : Set (FiniteOperator S)) := by
-    simpa [finiteToeplitzAlgebra, finiteToeplitzCore] using a.2
+    have ha := a.2
+    change (a : FiniteOperator S) ∈
+      (StarAlgebra.adjoin ℂ (primeShiftSet hS)).topologicalClosure at ha
+    rw [StarSubalgebra.topologicalClosure_coe] at ha
+    simpa [finiteToeplitzCore] using ha
   obtain ⟨b, hb, hab⟩ :=
     (Metric.mem_closure_iff.1 ha_closure) (ε / 3) hε3
   let b₀ : finiteToeplitzCore hS := ⟨b, hb⟩
