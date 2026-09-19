@@ -42,7 +42,7 @@ theorem continuous_ambientTimeEvolution_core
           change ambientTimeStarAlgEquiv S t
               (algebraMap ℂ (FiniteOperator S) c) =
             algebraMap ℂ (FiniteOperator S) c
-          simp
+          rw [Algebra.algebraMap_eq_smul_one, map_smul, map_one]
         rw [heq]
         exact continuous_const
     | add x y hx hy =>
@@ -166,7 +166,8 @@ theorem continuous_ambientTimeEvolution_finiteToeplitz
           dist b (a : FiniteOperator S)) := by
       rw [hleft, hright]
     _ < ε := by
-      rw [dist_comm b (a : FiniteOperator S)] at hab
+      have hba : dist b (a : FiniteOperator S) < ε / 3 := by
+        simpa [dist_comm] using hab
       linarith
 
 /-- The restricted finite Toeplitz dynamics is point-norm continuous. -/
