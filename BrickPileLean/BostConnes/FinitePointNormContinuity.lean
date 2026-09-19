@@ -4,6 +4,7 @@ namespace BrickPileLean
 namespace BostConnes
 
 open Filter
+open scoped Topology
 
 noncomputable section
 
@@ -21,23 +22,78 @@ theorem continuous_ambientTimeEvolution_core
     Continuous fun t : ℝ =>
       ambientTimeEvolution S t (a : FiniteOperator S) := by
   let a₀ : StarAlgebra.adjoin ℂ (primeShiftSet hS) := ⟨a.1, a.2⟩
-  change Continuous fun t : ℝ =>
-    ambientTimeStarAlgEquiv S t (a₀ : FiniteOperator S)
-  induction a₀ using StarAlgebra.adjoin_induction_subtype with
-  | mem x hx =>
-      rcases hx with ⟨p, rfl⟩
-      simp_rw [ambientTimeStarAlgEquiv_apply, ambientTimeEvolution_shift hS]
-      exact (continuous_timePhase (primeSemigroupElement S p)).smul continuous_const
-  | algebraMap c =>
-      simpa using
-        (continuous_const :
-          Continuous fun _ : ℝ => algebraMap ℂ (FiniteOperator S) c)
-  | add x y hx hy =>
-      simpa using hx.add hy
-  | mul x y hx hy =>
-      simpa using hx.mul hy
-  | star x hx =>
-      simpa using hx.star
+  have hcore : ∀ x : StarAlgebra.adjoin ℂ (primeShiftSet hS),
+      Continuous fun t : ℝ =>
+        ambientTimeEvolution S t (x : FiniteOperator S) := by
+    intro x
+    induction x using StarAlgebra.adjoin_induction_subtype with
+    | mem x hx =>
+        rcases hx with ⟨p, rfl⟩
+        simp_rw [ambientTimeEvolution_shift hS]
+        exact (continuous_timePhase (primeSemigroupElement S p)).smul continuous_const
+    | algebraMap c =>
+        have heq :
+            (fun t : ℝ =>
+              ambientTimeEvolution S t
+                ((algebraMap ℂ (StarAlgebra.adjoin ℂ (primeShiftSet hS)) c :
+                  StarAlgebra.adjoin ℂ (primeShiftSet hS)) : FiniteOperator S)) =
+              fun _ : ℝ => algebraMap ℂ (FiniteOperator S) c := by
+          funext t
+          change ambientTimeStarAlgEquiv S t
+              (algebraMap ℂ (FiniteOperator S) c) =
+            algebraMap ℂ (FiniteOperator S) c
+          simp
+        rw [heq]
+        exact continuous_const
+    | add x y hx hy =>
+        have heq :
+            (fun t : ℝ =>
+              ambientTimeEvolution S t
+                (((x + y : StarAlgebra.adjoin ℂ (primeShiftSet hS)) :
+                  StarAlgebra.adjoin ℂ (primeShiftSet hS)) : FiniteOperator S)) =
+              fun t : ℝ =>
+                ambientTimeEvolution S t (x : FiniteOperator S) +
+                  ambientTimeEvolution S t (y : FiniteOperator S) := by
+          funext t
+          change ambientTimeStarAlgEquiv S t
+              ((x : FiniteOperator S) + (y : FiniteOperator S)) =
+            ambientTimeEvolution S t (x : FiniteOperator S) +
+              ambientTimeEvolution S t (y : FiniteOperator S)
+          rw [map_add, ambientTimeStarAlgEquiv_apply, ambientTimeStarAlgEquiv_apply]
+        rw [heq]
+        exact hx.add hy
+    | mul x y hx hy =>
+        have heq :
+            (fun t : ℝ =>
+              ambientTimeEvolution S t
+                (((x * y : StarAlgebra.adjoin ℂ (primeShiftSet hS)) :
+                  StarAlgebra.adjoin ℂ (primeShiftSet hS)) : FiniteOperator S)) =
+              fun t : ℝ =>
+                ambientTimeEvolution S t (x : FiniteOperator S) *
+                  ambientTimeEvolution S t (y : FiniteOperator S) := by
+          funext t
+          change ambientTimeStarAlgEquiv S t
+              ((x : FiniteOperator S) * (y : FiniteOperator S)) =
+            ambientTimeEvolution S t (x : FiniteOperator S) *
+              ambientTimeEvolution S t (y : FiniteOperator S)
+          rw [map_mul, ambientTimeStarAlgEquiv_apply, ambientTimeStarAlgEquiv_apply]
+        rw [heq]
+        exact hx.mul hy
+    | star x hx =>
+        have heq :
+            (fun t : ℝ =>
+              ambientTimeEvolution S t
+                ((star x : StarAlgebra.adjoin ℂ (primeShiftSet hS)) :
+                  FiniteOperator S)) =
+              fun t : ℝ => star (ambientTimeEvolution S t (x : FiniteOperator S)) := by
+          funext t
+          change ambientTimeStarAlgEquiv S t
+              (star (x : FiniteOperator S)) =
+            star (ambientTimeEvolution S t (x : FiniteOperator S))
+          rw [map_star, ambientTimeStarAlgEquiv_apply]
+        rw [heq]
+        exact hx.star
+  exact hcore a₀
 
 /-- Each ambient time automorphism preserves distances. -/
 theorem dist_ambientTimeEvolution
@@ -64,9 +120,8 @@ theorem continuous_ambientTimeEvolution_finiteToeplitz
         closure (finiteToeplitzCore hS : Set (FiniteOperator S)) := by
     have ha := a.2
     change (a : FiniteOperator S) ∈
-      (StarAlgebra.adjoin ℂ (primeShiftSet hS)).topologicalClosure at ha
-    rw [StarSubalgebra.topologicalClosure_coe] at ha
-    simpa [finiteToeplitzCore] using ha
+      closure (StarAlgebra.adjoin ℂ (primeShiftSet hS) : Set (FiniteOperator S)) at ha
+    simpa only [finiteToeplitzCore] using ha
   obtain ⟨b, hb, hab⟩ :=
     (Metric.mem_closure_iff.1 ha_closure) (ε / 3) hε3
   let b₀ : finiteToeplitzCore hS := ⟨b, hb⟩
