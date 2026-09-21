@@ -12,4 +12,5 @@ import BrickPileLean.BostConnes.FiniteGibbsExpectation
 import BrickPileLean.BostConnes.FiniteGibbsState
 import BrickPileLean.BostConnes.FiniteToeplitzCore
 import BrickPileLean.BostConnes.FiniteAnalyticMonomial
+import BrickPileLean.BostConnes.FiniteToeplitzCancellation
 import BrickPileLean.BostConnes.FinitePointNormContinuity
