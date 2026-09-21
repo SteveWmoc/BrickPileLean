@@ -13,3 +13,4 @@ import BrickPileLean.BostConnes.FiniteGibbsState
 import BrickPileLean.BostConnes.FiniteToeplitzCore
 import BrickPileLean.BostConnes.FiniteAnalyticMonomial
 import BrickPileLean.BostConnes.FinitePointNormContinuity
+import BrickPileLean.BostConnes.FiniteKMSGenerators
