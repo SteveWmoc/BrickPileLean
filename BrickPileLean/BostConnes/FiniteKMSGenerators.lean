@@ -1,4 +1,5 @@
 import BrickPileLean.BostConnes.FinitePointNormContinuity
+import BrickPileLean.BostConnes.FiniteGibbsState
 
 namespace BrickPileLean
 namespace BostConnes
