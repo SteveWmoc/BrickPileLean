@@ -131,6 +131,7 @@ theorem toeplitzMonomial_mul_of_left_multiple
           rw [shiftAdjoint_mul_shiftOperator_left_multiple]
     _ = shiftOperator hS m * shiftAdjoint hS (s * q) := by
           rw [shiftAdjoint_mul hS s q]
+          simp only [mul_assoc]
 
 /-- Matching middle indices cancel completely:
 `(V_m V_n*) (V_n V_s*) = V_m V_s*`. -/
