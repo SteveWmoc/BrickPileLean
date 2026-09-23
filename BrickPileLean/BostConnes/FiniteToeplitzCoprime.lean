@@ -19,15 +19,25 @@ theorem finitePrimeSemigroup_dvd_iff_coe_dvd
     let ka : ExponentVector S := e.symm a
     let kb : ExponentVector S := e.symm b
     have haka : semigroupElement S ka = (a : ℕ) := by
-      have h := congrArg
-        (fun n : finitePrimeSemigroup S => (n : ℕ))
-        (e.apply_symm_apply a)
-      simpa [e, ka] using h
+      calc
+        semigroupElement S ka =
+            (exponentVectorEquivFinitePrimeSemigroup S hS ka : ℕ) := by
+              symm
+              exact exponentVectorEquivFinitePrimeSemigroup_apply S hS ka
+        _ = (a : ℕ) := by
+              exact congrArg
+                (fun n : finitePrimeSemigroup S => (n : ℕ))
+                (e.apply_symm_apply a)
     have hkb : semigroupElement S kb = (b : ℕ) := by
-      have h := congrArg
-        (fun n : finitePrimeSemigroup S => (n : ℕ))
-        (e.apply_symm_apply b)
-      simpa [e, kb] using h
+      calc
+        semigroupElement S kb =
+            (exponentVectorEquivFinitePrimeSemigroup S hS kb : ℕ) := by
+              symm
+              exact exponentVectorEquivFinitePrimeSemigroup_apply S hS kb
+        _ = (b : ℕ) := by
+              exact congrArg
+                (fun n : finitePrimeSemigroup S => (n : ℕ))
+                (e.apply_symm_apply b)
     have ha0 : (a : ℕ) ≠ 0 :=
       (finitePrimeSemigroup_coe_pos hS a).ne'
     have hb0 : (b : ℕ) ≠ 0 :=
@@ -49,7 +59,7 @@ theorem finitePrimeSemigroup_dvd_iff_coe_dvd
       exact exponentVectorEquivFinitePrimeSemigroup_apply S hS kc
     refine ⟨c, ?_⟩
     apply Subtype.ext
-    change (a : ℕ) * (c : ℕ) = (b : ℕ)
+    change (b : ℕ) = (a : ℕ) * (c : ℕ)
     rw [← haka, hc, ← semigroupElement_add, hsum, hkb]
 
 /-- A scalar single basis vector is the corresponding scalar multiple of the
@@ -115,7 +125,8 @@ theorem shiftAdjoint_mul_shiftOperator_of_coprime
     (shiftOperator hS b).comp (shiftAdjoint hS a)
   refine lp.ext_continuousLinearMap
     (ENNReal.ofNat_ne_top (n := nat_lit 2)) fun k => ?_
-  ext z
+  apply ContinuousLinearMap.ext
+  intro z
   change shiftAdjoint hS a
       (shiftOperator hS b (lp.single 2 k z)) =
     shiftOperator hS b
