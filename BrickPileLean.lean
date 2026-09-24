@@ -14,5 +14,6 @@ import BrickPileLean.BostConnes.FiniteToeplitzCore
 import BrickPileLean.BostConnes.FiniteAnalyticMonomial
 import BrickPileLean.BostConnes.FiniteToeplitzCancellation
 import BrickPileLean.BostConnes.FiniteToeplitzCoprime
+import BrickPileLean.BostConnes.FiniteToeplitzNormalForm
 import BrickPileLean.BostConnes.FinitePointNormContinuity
 import BrickPileLean.BostConnes.FiniteKMSGenerators
