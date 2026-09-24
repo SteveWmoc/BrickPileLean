@@ -253,15 +253,30 @@ theorem toeplitzMonomial_mul_normalForm
       toeplitzMonomial hS
         (m * finitePrimeRightResidual hS n r)
         (s * finitePrimeLeftResidual hS n r) := by
-  rw [← finitePrimeCommonFactor_mul_leftResidual hS n r,
-    ← finitePrimeCommonFactor_mul_rightResidual hS n r]
-  exact toeplitzMonomial_mul_of_common_factor_coprime hS
-    m
-    (finitePrimeCommonFactor hS n r)
-    (finitePrimeLeftResidual hS n r)
-    (finitePrimeRightResidual hS n r)
-    s
-    (finitePrimeResiduals_coprime hS n r)
+  let d := finitePrimeCommonFactor hS n r
+  let a := finitePrimeLeftResidual hS n r
+  let b := finitePrimeRightResidual hS n r
+  have hn : d * a = n := by
+    exact finitePrimeCommonFactor_mul_leftResidual hS n r
+  have hr : d * b = r := by
+    exact finitePrimeCommonFactor_mul_rightResidual hS n r
+  have hab : Nat.Coprime (a : ℕ) (b : ℕ) := by
+    exact finitePrimeResiduals_coprime hS n r
+  have hprod :
+      toeplitzMonomial hS m (d * a) *
+          toeplitzMonomial hS (d * b) s =
+        toeplitzMonomial hS (m * b) (s * a) := by
+    exact toeplitzMonomial_mul_of_common_factor_coprime hS m d a b s hab
+  calc
+    toeplitzMonomial hS m n * toeplitzMonomial hS r s =
+        toeplitzMonomial hS m (d * a) *
+          toeplitzMonomial hS (d * b) s := by
+            rw [hn, hr]
+    _ = toeplitzMonomial hS (m * b) (s * a) := hprod
+    _ = toeplitzMonomial hS
+        (m * finitePrimeRightResidual hS n r)
+        (s * finitePrimeLeftResidual hS n r) := by
+          rfl
 
 end
 
