@@ -97,6 +97,25 @@ theorem finiteGibbsState_toeplitzMonomial_mul
       exact hcross ((finitePrimeResidual_cross_iff hS m n r s).1 h)
     simp [hcross, hres]
 
+/-- Off the cross-diagonal `m r = n s`, the Gibbs expectation of a
+product of two standard Toeplitz monomials vanishes. -/
+theorem finiteGibbsState_toeplitzMonomial_mul_of_cross_ne
+    {S : Finset ℕ} {β : ℝ}
+    (hS : ∀ p ∈ S, Nat.Prime p) (hβ : 0 < β)
+    {m n r s : finitePrimeSemigroup S}
+    (hcross : m * r ≠ n * s) :
+    finiteGibbsState hS hβ
+        (finiteToeplitzMonomial hS m n * finiteToeplitzMonomial hS r s) = 0 := by
+  let a := finitePrimeLeftResidual hS n r
+  let b := finitePrimeRightResidual hS n r
+  have hres : m * b ≠ s * a := by
+    intro h
+    exact hcross ((finitePrimeResidual_cross_iff hS m n r s).1 h)
+  change gibbsExpectation S β
+      (toeplitzMonomial hS m n * toeplitzMonomial hS r s) = 0
+  rw [toeplitzMonomial_mul_normalForm hS m n r s]
+  exact gibbsExpectation_toeplitzMonomial_of_ne hS hβ hres
+
 /-- Cross-multiplied KMS identity for two arbitrary standard Toeplitz
 monomials.  This form avoids division by a Gibbs weight and is the algebraic
 heart of the monomial KMS relation. -/
@@ -168,21 +187,29 @@ theorem finiteGibbsState_kms_toeplitzMonomials_cross
     have hphiAB :
         finiteGibbsState hS hβ
             (finiteToeplitzMonomial hS m n *
-              finiteToeplitzMonomial hS r s) = 0 := by
-      have h :=
-        finiteGibbsState_toeplitzMonomial_mul hS hβ m n r s
-      rw [if_neg hcross] at h
-      exact h
+              finiteToeplitzMonomial hS r s) = 0 :=
+      finiteGibbsState_toeplitzMonomial_mul_of_cross_ne hS hβ hcross
     have hphiBA :
         finiteGibbsState hS hβ
             (finiteToeplitzMonomial hS r s *
-              finiteToeplitzMonomial hS m n) = 0 := by
-      have h :=
-        finiteGibbsState_toeplitzMonomial_mul hS hβ r s m n
-      rw [if_neg hcross'] at h
-      exact h
-    rw [hphiAB, hphiBA]
-    simp
+              finiteToeplitzMonomial hS m n) = 0 :=
+      finiteGibbsState_toeplitzMonomial_mul_of_cross_ne hS hβ hcross'
+    calc
+      (((gibbsWeight β n : ℝ) : ℂ)) *
+          finiteGibbsState hS hβ
+            (finiteToeplitzMonomial hS m n *
+              finiteToeplitzMonomial hS r s) =
+        (((gibbsWeight β n : ℝ) : ℂ)) * 0 := by
+          exact congrArg
+            (fun z : ℂ => (((gibbsWeight β n : ℝ) : ℂ)) * z) hphiAB
+      _ = 0 := by simp
+      _ = (((gibbsWeight β m : ℝ) : ℂ)) * 0 := by simp
+      _ = (((gibbsWeight β m : ℝ) : ℂ)) *
+          finiteGibbsState hS hβ
+            (finiteToeplitzMonomial hS r s *
+              finiteToeplitzMonomial hS m n) := by
+          exact congrArg
+            (fun z : ℂ => (((gibbsWeight β m : ℝ) : ℂ)) * z) hphiBA.symm
 
 /-- KMS boundary identity for two arbitrary standard analytic monomials.
 
