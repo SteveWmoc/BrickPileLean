@@ -165,9 +165,24 @@ theorem finiteGibbsState_kms_toeplitzMonomials_cross
       intro h
       apply hcross
       simpa [mul_comm] using h
-    rw [finiteGibbsState_toeplitzMonomial_mul hS hβ m n r s,
-      finiteGibbsState_toeplitzMonomial_mul hS hβ r s m n]
-    simp [hcross, hcross']
+    have hphiAB :
+        finiteGibbsState hS hβ
+            (finiteToeplitzMonomial hS m n *
+              finiteToeplitzMonomial hS r s) = 0 := by
+      have h :=
+        finiteGibbsState_toeplitzMonomial_mul hS hβ m n r s
+      rw [if_neg hcross] at h
+      exact h
+    have hphiBA :
+        finiteGibbsState hS hβ
+            (finiteToeplitzMonomial hS r s *
+              finiteToeplitzMonomial hS m n) = 0 := by
+      have h :=
+        finiteGibbsState_toeplitzMonomial_mul hS hβ r s m n
+      rw [if_neg hcross'] at h
+      exact h
+    rw [hphiAB, hphiBA]
+    simp
 
 /-- KMS boundary identity for two arbitrary standard analytic monomials.
 
