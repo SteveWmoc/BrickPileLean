@@ -17,3 +17,4 @@ import BrickPileLean.BostConnes.FiniteToeplitzCoprime
 import BrickPileLean.BostConnes.FiniteToeplitzNormalForm
 import BrickPileLean.BostConnes.FinitePointNormContinuity
 import BrickPileLean.BostConnes.FiniteKMSGenerators
+import BrickPileLean.BostConnes.FiniteKMSMonomials
