@@ -112,12 +112,11 @@ theorem finiteToeplitzExpansionEvalA_coe
       finiteToeplitzExpansionEval hS c := by
   classical
   rw [finiteToeplitzExpansionEvalA, finiteToeplitzExpansionEval]
-  induction c using Finsupp.induction with
-  | zero =>
-      simp
-  | single_add i a c hi ha ih =>
-      simp [hi, ih, finiteToeplitzMonomialFamilyA,
-        finiteToeplitzMonomialFamily]
+  change (finiteToeplitzAlgebra hS).subtype
+      (c.sum fun i a => a • finiteToeplitzMonomialFamilyA hS i) =
+    c.sum fun i a => a • finiteToeplitzMonomialFamily hS i
+  rw [map_finsuppSum]
+  simp [finiteToeplitzMonomialFamilyA, finiteToeplitzMonomialFamily]
 
 /-- The chosen finite expansion also recovers the core element after
 inclusion into the completed finite Toeplitz algebra. -/
