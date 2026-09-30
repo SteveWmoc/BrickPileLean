@@ -30,8 +30,8 @@ theorem toeplitzMonomial_mem_finiteToeplitzMonomialSpan
     {S : Finset ℕ} (hS : ∀ p ∈ S, Nat.Prime p) :
     shiftAdjoint hS (1 : finitePrimeSemigroup S) = (1 : FiniteOperator S) := by
   unfold shiftAdjoint
-  rw [← ContinuousLinearMap.star_eq_adjoint, shiftOperator_one]
-  simp
+  rw [shiftOperator_one]
+  exact ContinuousLinearMap.adjoint_one
 
 /-- The identity is the standard monomial `V_1 V_1*`. -/
 @[simp] theorem toeplitzMonomial_one_one
@@ -47,8 +47,9 @@ theorem toeplitzMonomial_mem_finiteToeplitzMonomialSpan
     {S : Finset ℕ} (hS : ∀ p ∈ S, Nat.Prime p)
     (m n : finitePrimeSemigroup S) :
     star (toeplitzMonomial hS m n) = toeplitzMonomial hS n m := by
-  unfold toeplitzMonomial shiftAdjoint
-  simp [ContinuousLinearMap.star_eq_adjoint]
+  unfold toeplitzMonomial
+  rw [star_mul]
+  simp [shiftAdjoint, ContinuousLinearMap.star_eq_adjoint]
 
 /-- The linear span of standard monomials is closed under multiplication. -/
 theorem finiteToeplitzMonomialSpan_mul_mem
@@ -68,23 +69,25 @@ theorem finiteToeplitzMonomialSpan_mul_mem
       | zero =>
           simp
       | add y z _ _ hy hz =>
-          simpa [mul_add] using
-            (add_mem hy hz : y + z ∈ finiteToeplitzMonomialSpan hS)
+          have hadd :=
+            (finiteToeplitzMonomialSpan hS).add_mem hy hz
+          simpa [mul_add] using hadd
       | smul c y _ hy =>
           have hmem :
               c • (toeplitzMonomial hS m n * y) ∈
                 finiteToeplitzMonomialSpan hS :=
-            smul_mem (finiteToeplitzMonomialSpan hS) c hy
+            (finiteToeplitzMonomialSpan hS).smul_mem c hy
           simpa [mul_smul_comm] using hmem
   | zero =>
       simp
   | add x z _ _ hx hz =>
-      simpa [add_mul] using
-        (add_mem hx hz : x * y + z * y ∈ finiteToeplitzMonomialSpan hS)
+      have hadd :=
+        (finiteToeplitzMonomialSpan hS).add_mem hx hz
+      simpa [add_mul] using hadd
   | smul c x _ hx =>
       have hmem :
           c • (x * y) ∈ finiteToeplitzMonomialSpan hS :=
-        smul_mem (finiteToeplitzMonomialSpan hS) c hx
+        (finiteToeplitzMonomialSpan hS).smul_mem c hx
       simpa [smul_mul_assoc] using hmem
 
 /-- The linear span of standard monomials is closed under adjoints. -/
@@ -101,12 +104,13 @@ theorem finiteToeplitzMonomialSpan_star_mem
   | zero =>
       simp
   | add x y _ _ hx hy =>
-      simpa using
-        (add_mem hx hy : star x + star y ∈ finiteToeplitzMonomialSpan hS)
+      have hadd :=
+        (finiteToeplitzMonomialSpan hS).add_mem hx hy
+      simpa using hadd
   | smul c x _ hx =>
       have hmem :
           star c • star x ∈ finiteToeplitzMonomialSpan hS :=
-        smul_mem (finiteToeplitzMonomialSpan hS) (star c) hx
+        (finiteToeplitzMonomialSpan hS).smul_mem (star c) hx
       simpa using hmem
 
 /-- The identity operator belongs to the monomial span. -/
@@ -127,6 +131,8 @@ theorem finiteToeplitzCore_le_monomialSpan
   induction hx using StarAlgebra.adjoin_induction with
   | mem x hx =>
       rcases hx with ⟨p, rfl⟩
+      change shiftOperator hS (primeSemigroupElement S p) ∈
+        finiteToeplitzMonomialSpan hS
       have hmono :
           shiftOperator hS (primeSemigroupElement S p) =
             toeplitzMonomial hS (primeSemigroupElement S p) 1 := by
@@ -139,7 +145,7 @@ theorem finiteToeplitzCore_le_monomialSpan
       have h1 := one_mem_finiteToeplitzMonomialSpan hS
       have hc :
           c • (1 : FiniteOperator S) ∈ finiteToeplitzMonomialSpan hS :=
-        smul_mem (finiteToeplitzMonomialSpan hS) c h1
+        (finiteToeplitzMonomialSpan hS).smul_mem c h1
       simpa [Algebra.smul_def] using hc
   | add x y _ _ hx hy =>
       exact add_mem hx hy
