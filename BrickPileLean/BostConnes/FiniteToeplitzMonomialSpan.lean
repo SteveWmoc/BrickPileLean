@@ -40,7 +40,9 @@ theorem toeplitzMonomial_mem_finiteToeplitzMonomialSpan
       (1 : FiniteOperator S) := by
   unfold toeplitzMonomial
   rw [shiftOperator_one, shiftAdjoint_one]
-  simp
+  apply ContinuousLinearMap.ext
+  intro x
+  rfl
 
 /-- Taking adjoints swaps the two indices of a standard monomial. -/
 @[simp] theorem star_toeplitzMonomial
