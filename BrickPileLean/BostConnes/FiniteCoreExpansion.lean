@@ -87,6 +87,16 @@ def finiteToeplitzCoreToAlgebra
       FiniteOperator S) = (x : FiniteOperator S) :=
   rfl
 
+/-- Coercing a standard monomial from the finite Toeplitz algebra to the
+ambient operator algebra forgets only its membership proof. -/
+@[simp] theorem finiteToeplitzMonomial_coe
+    {S : Finset ℕ} (hS : ∀ p ∈ S, Nat.Prime p)
+    (m n : finitePrimeSemigroup S) :
+    ((finiteToeplitzMonomial hS m n : finiteToeplitzAlgebra hS) :
+      FiniteOperator S) =
+      toeplitzMonomial hS m n :=
+  rfl
+
 /-- The standard monomial family, now regarded inside the completed finite
 Toeplitz algebra. -/
 def finiteToeplitzMonomialFamilyA
