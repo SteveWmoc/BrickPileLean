@@ -115,7 +115,7 @@ theorem finiteToeplitzExpansionEvalA_coe
   induction c using Finsupp.induction with
   | zero =>
       simp
-  | @add_one i a c hi ha ih =>
+  | single_add i a c hi ha ih =>
       simp [hi, ih, finiteToeplitzMonomialFamilyA,
         finiteToeplitzMonomialFamily]
 
@@ -129,6 +129,7 @@ theorem finiteToeplitzCoreExpansion_evalA
   apply Subtype.ext
   rw [finiteToeplitzExpansionEvalA_coe,
     finiteToeplitzCoreExpansion_eval]
+  exact (finiteToeplitzCoreToAlgebra_coe hS x).symm
 
 end
 
