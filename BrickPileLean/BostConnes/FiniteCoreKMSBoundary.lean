@@ -107,6 +107,26 @@ theorem finiteGibbsState_smul_mul_smul
   rw [smul_mul_smul, map_smul]
   rfl
 
+/-- The Gibbs functional distributes over a sum in the right factor. -/
+theorem finiteGibbsState_mul_add
+    {S : Finset ℕ} {β : ℝ}
+    (hS : ∀ p ∈ S, Nat.Prime p) (hβ : 0 < β)
+    (x y z : finiteToeplitzAlgebra hS) :
+    finiteGibbsState hS hβ (x * (y + z)) =
+      finiteGibbsState hS hβ (x * y) +
+        finiteGibbsState hS hβ (x * z) := by
+  rw [mul_add, map_add]
+
+/-- The Gibbs functional distributes over a sum in the left factor. -/
+theorem finiteGibbsState_add_mul
+    {S : Finset ℕ} {β : ℝ}
+    (hS : ∀ p ∈ S, Nat.Prime p) (hβ : 0 < β)
+    (x y z : finiteToeplitzAlgebra hS) :
+    finiteGibbsState hS hβ ((x + y) * z) =
+      finiteGibbsState hS hβ (x * z) +
+        finiteGibbsState hS hβ (y * z) := by
+  rw [add_mul, map_add]
+
 /-- Scalar-multiple version of the monomial KMS boundary identity. -/
 theorem finiteGibbsState_kms_toeplitzMonomial_smul
     {S : Finset ℕ} {β : ℝ}
@@ -175,11 +195,40 @@ theorem finiteGibbsState_kms_toeplitzMonomial_expansion
       simp
   | single_add i a d hi ha ih =>
       rcases i with ⟨r, s⟩
-      rw [finiteToeplitzExpansionEvalA_add,
-        finiteToeplitzExpansionEvalA_single]
-      rw [mul_add, add_mul, map_add, map_add]
-      rw [finiteGibbsState_kms_toeplitzMonomial_smul
-        (S := S) (β := β) hS hβ m n r s a, ih]
+      let M : finiteToeplitzAlgebra hS :=
+        finiteToeplitzMonomial hS m n
+      let N : finiteToeplitzAlgebra hS :=
+        finiteToeplitzMonomial hS r s
+      let E : finiteToeplitzAlgebra hS :=
+        finiteToeplitzExpansionEvalA hS d
+      let W : ℂ := finiteToeplitzMonomialKMSWeight β (m, n)
+      have hEval :
+          finiteToeplitzExpansionEvalA hS (Finsupp.single (r, s) a + d) =
+            a • N + E := by
+        rw [finiteToeplitzExpansionEvalA_add,
+          finiteToeplitzExpansionEvalA_single]
+      have hsingle :
+          finiteGibbsState hS hβ (M * (a • N)) =
+            finiteGibbsState hS hβ ((a • N) * (W • M)) := by
+        exact finiteGibbsState_kms_toeplitzMonomial_smul
+          (S := S) (β := β) hS hβ m n r s a
+      have ih' :
+          finiteGibbsState hS hβ (M * E) =
+            finiteGibbsState hS hβ (E * (W • M)) := by
+        exact ih
+      rw [hEval]
+      calc
+        finiteGibbsState hS hβ (M * (a • N + E)) =
+            finiteGibbsState hS hβ (M * (a • N)) +
+              finiteGibbsState hS hβ (M * E) :=
+          finiteGibbsState_mul_add
+            (S := S) (β := β) hS hβ M (a • N) E
+        _ = finiteGibbsState hS hβ ((a • N) * (W • M)) +
+              finiteGibbsState hS hβ (E * (W • M)) := by
+            rw [hsingle, ih']
+        _ = finiteGibbsState hS hβ ((a • N + E) * (W • M)) :=
+          (finiteGibbsState_add_mul
+            (S := S) (β := β) hS hβ (a • N) E (W • M)).symm
 
 /-- Scalar-multiple version of the monomial-versus-expansion KMS identity. -/
 theorem finiteGibbsState_kms_smul_toeplitzMonomial_expansion
@@ -242,13 +291,49 @@ theorem finiteGibbsState_kms_expansions
       simp
   | single_add i a c hi ha ih =>
       rcases i with ⟨m, n⟩
-      rw [finiteToeplitzExpansionEvalA_add,
-        finiteToeplitzExpansionEvalA_single,
-        finiteToeplitzExpansionKMSBoundaryA_add,
-        finiteToeplitzExpansionKMSBoundaryA_single]
-      rw [add_mul, mul_add, map_add, map_add]
-      rw [finiteGibbsState_kms_smul_toeplitzMonomial_expansion
-        (S := S) (β := β) hS hβ m n a d, ih]
+      let M : finiteToeplitzAlgebra hS :=
+        finiteToeplitzMonomial hS m n
+      let E : finiteToeplitzAlgebra hS :=
+        finiteToeplitzExpansionEvalA hS c
+      let D : finiteToeplitzAlgebra hS :=
+        finiteToeplitzExpansionEvalA hS d
+      let B : finiteToeplitzAlgebra hS :=
+        finiteToeplitzExpansionKMSBoundaryA hS β c
+      let W : ℂ := finiteToeplitzMonomialKMSWeight β (m, n)
+      have hEval :
+          finiteToeplitzExpansionEvalA hS (Finsupp.single (m, n) a + c) =
+            a • M + E := by
+        rw [finiteToeplitzExpansionEvalA_add,
+          finiteToeplitzExpansionEvalA_single]
+      have hBoundary :
+          finiteToeplitzExpansionKMSBoundaryA hS β
+              (Finsupp.single (m, n) a + c) =
+            a • (W • M) + B := by
+        rw [finiteToeplitzExpansionKMSBoundaryA_add,
+          finiteToeplitzExpansionKMSBoundaryA_single]
+        rfl
+      have hsingle :
+          finiteGibbsState hS hβ ((a • M) * D) =
+            finiteGibbsState hS hβ (D * (a • (W • M))) := by
+        exact finiteGibbsState_kms_smul_toeplitzMonomial_expansion
+          (S := S) (β := β) hS hβ m n a d
+      have ih' :
+          finiteGibbsState hS hβ (E * D) =
+            finiteGibbsState hS hβ (D * B) := by
+        exact ih
+      rw [hEval, hBoundary]
+      calc
+        finiteGibbsState hS hβ ((a • M + E) * D) =
+            finiteGibbsState hS hβ ((a • M) * D) +
+              finiteGibbsState hS hβ (E * D) :=
+          finiteGibbsState_add_mul
+            (S := S) (β := β) hS hβ (a • M) E D
+        _ = finiteGibbsState hS hβ (D * (a • (W • M))) +
+              finiteGibbsState hS hβ (D * B) := by
+            rw [hsingle, ih']
+        _ = finiteGibbsState hS hβ (D * (a • (W • M) + B)) :=
+          (finiteGibbsState_mul_add
+            (S := S) (β := β) hS hβ D (a • (W • M)) B).symm
 
 /-- The chosen KMS boundary representative of an algebraic-core element,
 obtained by weighting a chosen finite monomial expansion termwise. -/
