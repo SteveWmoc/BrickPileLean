@@ -40,7 +40,8 @@ def finiteToeplitzExpansionKMSBoundaryA
       finiteToeplitzExpansionEvalA hS c +
         finiteToeplitzExpansionEvalA hS d := by
   classical
-  simp [finiteToeplitzExpansionEvalA, Finsupp.sum_add_index]
+  unfold finiteToeplitzExpansionEvalA
+  exact Finsupp.sum_add_index (by simp) (by simp [add_smul])
 
 @[simp] theorem finiteToeplitzExpansionEvalA_single
     {S : Finset ℕ} (hS : ∀ p ∈ S, Nat.Prime p)
@@ -63,7 +64,8 @@ def finiteToeplitzExpansionKMSBoundaryA
       finiteToeplitzExpansionKMSBoundaryA hS β c +
         finiteToeplitzExpansionKMSBoundaryA hS β d := by
   classical
-  simp [finiteToeplitzExpansionKMSBoundaryA, Finsupp.sum_add_index]
+  unfold finiteToeplitzExpansionKMSBoundaryA
+  exact Finsupp.sum_add_index (by simp) (by simp [add_smul])
 
 @[simp] theorem finiteToeplitzExpansionKMSBoundaryA_single
     {S : Finset ℕ} (hS : ∀ p ∈ S, Nat.Prime p) (β : ℝ)
