@@ -207,6 +207,7 @@ theorem finiteGibbsState_kms_toeplitzMonomial_expansion
             a • N + E := by
         rw [finiteToeplitzExpansionEvalA_add,
           finiteToeplitzExpansionEvalA_single]
+        rfl
       have hsingle :
           finiteGibbsState hS hβ (M * (a • N)) =
             finiteGibbsState hS hβ ((a • N) * (W • M)) := by
@@ -216,16 +217,22 @@ theorem finiteGibbsState_kms_toeplitzMonomial_expansion
           finiteGibbsState hS hβ (M * E) =
             finiteGibbsState hS hβ (E * (W • M)) := by
         exact ih
-      rw [hEval]
       calc
-        finiteGibbsState hS hβ (M * (a • N + E)) =
+        finiteGibbsState hS hβ
+            (M * finiteToeplitzExpansionEvalA hS
+              (Finsupp.single (r, s) a + d)) =
+            finiteGibbsState hS hβ (M * (a • N + E)) := by
+          exact congrArg
+            (fun X : finiteToeplitzAlgebra hS =>
+              finiteGibbsState hS hβ (M * X)) hEval
+        _ =
             finiteGibbsState hS hβ (M * (a • N)) +
               finiteGibbsState hS hβ (M * E) :=
           finiteGibbsState_mul_add
             (S := S) (β := β) hS hβ M (a • N) E
         _ = finiteGibbsState hS hβ ((a • N) * (W • M)) +
               finiteGibbsState hS hβ (E * (W • M)) := by
-            rw [hsingle, ih']
+            exact congrArg₂ (fun u v : ℂ => u + v) hsingle ih'
         _ = finiteGibbsState hS hβ ((a • N + E) * (W • M)) :=
           (finiteGibbsState_add_mul
             (S := S) (β := β) hS hβ (a • N) E (W • M)).symm
@@ -305,6 +312,7 @@ theorem finiteGibbsState_kms_expansions
             a • M + E := by
         rw [finiteToeplitzExpansionEvalA_add,
           finiteToeplitzExpansionEvalA_single]
+        rfl
       have hBoundary :
           finiteToeplitzExpansionKMSBoundaryA hS β
               (Finsupp.single (m, n) a + c) =
@@ -321,19 +329,31 @@ theorem finiteGibbsState_kms_expansions
           finiteGibbsState hS hβ (E * D) =
             finiteGibbsState hS hβ (D * B) := by
         exact ih
-      rw [hEval, hBoundary]
       calc
-        finiteGibbsState hS hβ ((a • M + E) * D) =
+        finiteGibbsState hS hβ
+            (finiteToeplitzExpansionEvalA hS
+              (Finsupp.single (m, n) a + c) * D) =
+            finiteGibbsState hS hβ ((a • M + E) * D) := by
+          exact congrArg
+            (fun X : finiteToeplitzAlgebra hS =>
+              finiteGibbsState hS hβ (X * D)) hEval
+        _ =
             finiteGibbsState hS hβ ((a • M) * D) +
               finiteGibbsState hS hβ (E * D) :=
           finiteGibbsState_add_mul
             (S := S) (β := β) hS hβ (a • M) E D
         _ = finiteGibbsState hS hβ (D * (a • (W • M))) +
               finiteGibbsState hS hβ (D * B) := by
-            rw [hsingle, ih']
+            exact congrArg₂ (fun u v : ℂ => u + v) hsingle ih'
         _ = finiteGibbsState hS hβ (D * (a • (W • M) + B)) :=
           (finiteGibbsState_mul_add
             (S := S) (β := β) hS hβ D (a • (W • M)) B).symm
+        _ = finiteGibbsState hS hβ
+            (D * finiteToeplitzExpansionKMSBoundaryA hS β
+              (Finsupp.single (m, n) a + c)) := by
+          exact congrArg
+            (fun X : finiteToeplitzAlgebra hS =>
+              finiteGibbsState hS hβ (D * X)) hBoundary.symm
 
 /-- The chosen KMS boundary representative of an algebraic-core element,
 obtained by weighting a chosen finite monomial expansion termwise. -/
