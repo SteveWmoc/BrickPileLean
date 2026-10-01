@@ -236,6 +236,18 @@ theorem finiteGibbsState_kms_toeplitzMonomial_expansion
         _ = finiteGibbsState hS hβ ((a • N + E) * (W • M)) :=
           (finiteGibbsState_add_mul
             (S := S) (β := β) hS hβ (a • N) E (W • M)).symm
+        _ = finiteGibbsState hS hβ
+            (finiteToeplitzExpansionEvalA hS
+              (Finsupp.single (r, s) a + d) * (W • M)) := by
+          exact congrArg
+            (fun X : finiteToeplitzAlgebra hS =>
+              finiteGibbsState hS hβ (X * (W • M))) hEval.symm
+        _ = finiteGibbsState hS hβ
+            (finiteToeplitzExpansionEvalA hS
+              (Finsupp.single (r, s) a + d) *
+              (finiteToeplitzMonomialKMSWeight β (m, n) •
+                finiteToeplitzMonomial hS m n)) := by
+          rfl
 
 /-- Scalar-multiple version of the monomial-versus-expansion KMS identity. -/
 theorem finiteGibbsState_kms_smul_toeplitzMonomial_expansion
