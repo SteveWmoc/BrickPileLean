@@ -90,7 +90,6 @@ theorem finiteToeplitzExpansionComplexTimeA_ofReal
   rw [map_smul]
   rw [finiteTimeEvolution_toeplitzMonomial]
   rw [toeplitzMonomialComplexPhase_ofReal]
-  simp [smul_smul]
 
 end
 
