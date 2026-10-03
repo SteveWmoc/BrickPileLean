@@ -22,3 +22,4 @@ import BrickPileLean.BostConnes.FiniteToeplitzMonomialSpan
 import BrickPileLean.BostConnes.FiniteCoreExpansion
 import BrickPileLean.BostConnes.FiniteCoreKMSBoundary
 import BrickPileLean.BostConnes.FiniteAnalyticKMSBoundary
+import BrickPileLean.BostConnes.FiniteToeplitzMatrixCoefficients
