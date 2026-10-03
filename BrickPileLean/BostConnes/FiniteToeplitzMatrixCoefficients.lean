@@ -36,7 +36,7 @@ delta. -/
     {S : Finset ℕ} (n k : finitePrimeSemigroup S) :
     basisVector S n k = if n = k then 1 else 0 := by
   classical
-  simp [basisVector, lp.single_apply, Pi.single_apply]
+  simp [basisVector, lp.single_apply, Pi.single_apply, eq_comm]
 
 /-- A matrix coefficient of a standard Toeplitz monomial is nonzero exactly
 when the input and output labels are obtained from a common residual factor. -/
