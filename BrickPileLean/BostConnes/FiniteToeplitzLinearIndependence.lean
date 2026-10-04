@@ -39,12 +39,15 @@ theorem finiteToeplitzMonomialFamily_linearIndependent
               g j *
                 (finiteToeplitzMonomialFamily hS j
                   (basisVector S n) m)) = 0 := by
-          have h :=
+          have hfun :=
             congrArg
-              (fun x : FiniteHilbertSpace S => x m)
+              (fun x : FiniteHilbertSpace S =>
+                (x : finitePrimeSemigroup S → ℂ))
               hvec
+          rw [lp.coeFn_sum, lp.coeFn_zero] at hfun
+          have h := congrFun hfun m
           simpa only [Finset.sum_apply, lp.coeFn_smul,
-            Pi.smul_apply, smul_eq_mul] using h
+            Pi.smul_apply, smul_eq_mul, Pi.zero_apply] using h
         have hdiag :
             finiteToeplitzMonomialFamily hS (m, n)
                 (basisVector S n) m = 1 := by
