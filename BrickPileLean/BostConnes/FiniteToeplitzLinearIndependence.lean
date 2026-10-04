@@ -26,15 +26,14 @@ theorem finiteToeplitzMonomialFamily_linearIndependent
         rcases i with ⟨m, n⟩
         have hmatrix :
             (∑ j ∈ s,
-              g j *
-                (finiteToeplitzMonomialFamily hS j
-                  (basisVector S n) m)) = 0 := by
+              (g j •
+                finiteToeplitzMonomialFamily hS j
+                  (basisVector S n)) m) = 0 := by
           have h :=
             congrArg
               (fun T : FiniteOperator S => T (basisVector S n) m)
               hrel
-          simpa [Finset.sum_apply, finiteToeplitzMonomialFamily,
-            smul_eq_mul] using h
+          simpa [Finset.sum_apply, finiteToeplitzMonomialFamily] using h
         have hdiag :
             finiteToeplitzMonomialFamily hS (m, n)
                 (basisVector S n) m = 1 := by
@@ -46,9 +45,9 @@ theorem finiteToeplitzMonomialFamily_linearIndependent
           simpa using h
         have hoff :
             ∀ j ∈ s, j ≠ (m, n) →
-              g j *
-                  (finiteToeplitzMonomialFamily hS j
-                    (basisVector S n) m) = 0 := by
+              (g j •
+                finiteToeplitzMonomialFamily hS j
+                  (basisVector S n)) m = 0 := by
           intro j hj hji
           rcases j with ⟨r, t⟩
           by_cases hlt : (t : ℕ) < (n : ℕ)
@@ -57,7 +56,7 @@ theorem finiteToeplitzMonomialFamily_linearIndependent
               exact hlt
             have hgt : g (r, t) = 0 :=
               ih (t : ℕ) hltN (r, t) hj rfl
-            rw [hgt, zero_mul]
+            simp [hgt]
           · have hnt : (n : ℕ) ≤ (t : ℕ) :=
               Nat.le_of_not_gt hlt
             by_cases heq : (t : ℕ) = (n : ℕ)
@@ -76,7 +75,7 @@ theorem finiteToeplitzMonomialFamily_linearIndependent
                   toeplitzMonomial_numerator_eq_of_same_denominator_apply_ne_zero
                     hS r t n m heq hnz
                 exact hrne hr
-              rw [hz, mul_zero]
+              simp [Pi.smul_apply, hz]
             · have hgt : (n : ℕ) < (t : ℕ) :=
                 lt_of_le_of_ne hnt (Ne.symm heq)
               have hz :
@@ -89,14 +88,14 @@ theorem finiteToeplitzMonomialFamily_linearIndependent
                   toeplitzMonomial_denominator_le_of_apply_ne_zero
                     hS r t n m hnz
                 exact (not_le_of_gt hgt) hle
-              rw [hz, mul_zero]
+              simp [Pi.smul_apply, hz]
         have hcollapse :
             (∑ j ∈ s,
-              g j *
-                (finiteToeplitzMonomialFamily hS j
-                  (basisVector S n) m)) = g (m, n) := by
+              (g j •
+                finiteToeplitzMonomialFamily hS j
+                  (basisVector S n)) m) = g (m, n) := by
           rw [Finset.sum_eq_single (m, n)]
-          · rw [hdiag, mul_one]
+          · simp [Pi.smul_apply, hdiag]
           · exact hoff
           · simp [hi]
         rw [hcollapse] at hmatrix
@@ -123,7 +122,8 @@ theorem finiteToeplitzExpansionEval_eq_iff
         finiteToeplitzExpansionEval hS d ↔
       c = d := by
   constructor
-  · exact finiteToeplitzExpansionEval_injective hS
+  · intro h
+    exact finiteToeplitzExpansionEval_injective hS h
   · intro h
     exact congrArg (finiteToeplitzExpansionEval hS) h
 
