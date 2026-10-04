@@ -24,6 +24,16 @@ theorem finiteToeplitzMonomialFamily_linearIndependent
     | h N ih =>
         intro i hi hden
         rcases i with ⟨m, n⟩
+        have hvec :
+            (∑ j ∈ s,
+              g j •
+                finiteToeplitzMonomialFamily hS j
+                  (basisVector S n)) = 0 := by
+          have h :=
+            congrArg
+              (fun T : FiniteOperator S => T (basisVector S n))
+              hrel
+          simpa [Finset.sum_apply, finiteToeplitzMonomialFamily] using h
         have hmatrix :
             (∑ j ∈ s,
               (g j •
@@ -31,9 +41,9 @@ theorem finiteToeplitzMonomialFamily_linearIndependent
                   (basisVector S n)) m) = 0 := by
           have h :=
             congrArg
-              (fun T : FiniteOperator S => T (basisVector S n) m)
-              hrel
-          simpa [Finset.sum_apply, finiteToeplitzMonomialFamily] using h
+              (fun x : FiniteHilbertSpace S => x m)
+              hvec
+          simpa [Finset.sum_apply] using h
         have hdiag :
             finiteToeplitzMonomialFamily hS (m, n)
                 (basisVector S n) m = 1 := by
