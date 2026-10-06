@@ -156,8 +156,7 @@ theorem semigroupElement_coprime_of_disjoint
     (hdis : ∀ p : S, k p = 0 ∨ l p = 0) :
     Nat.Coprime (semigroupElement S k) (semigroupElement S l) := by
   apply Nat.coprime_of_dvd
-  intro q hq hqk
-  intro hql
+  intro q hq hqk hql
   change q ∣ ∏ p : S, p.1 ^ k p at hqk
   change q ∣ ∏ p : S, p.1 ^ l p at hql
   rcases
