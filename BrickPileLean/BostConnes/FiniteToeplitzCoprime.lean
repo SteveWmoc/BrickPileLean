@@ -88,8 +88,7 @@ theorem shiftAdjoint_shiftOperator_basisVector_of_coprime
           (shiftOperator hS b (basisVector S (a * q))) =
         basisVector S (b * q) := by
           rw [shiftOperator_basisVector]
-          simpa [mul_assoc, mul_comm, mul_left_comm] using
-            (shiftAdjoint_basisVector_mul hS a (b * q))
+          simp [mul_assoc, mul_comm, mul_left_comm]
       _ = shiftOperator hS b
           (shiftAdjoint hS a (basisVector S (a * q))) := by
             rw [shiftAdjoint_basisVector_mul, shiftOperator_basisVector]
