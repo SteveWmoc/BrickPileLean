@@ -25,7 +25,8 @@ theorem finiteGibbsStateCLM_isFiniteToeplitzCoreKMS
     (hS : ∀ p ∈ S, Nat.Prime p) (hβ : 0 < β) :
     IsFiniteToeplitzCoreKMS hS β (finiteGibbsStateCLM hS hβ) := by
   constructor
-  · simp
+  · change gibbsExpectation S β (1 : FiniteOperator S) = 1
+    exact gibbsExpectation_one hS hβ
   · intro x y
     exact finiteGibbsState_kms_core_complexTime hS hβ x y
 
@@ -110,7 +111,7 @@ theorem IsFiniteToeplitzCoreKMS.monomials
 inverse temperature. -/
 theorem gibbsWeight_ne_of_ne
     {S : Finset ℕ} {β : ℝ}
-    (hS : ∀ p ∈ S, Nat.Prime p) (hβ : 0 < β)
+    (_hS : ∀ p ∈ S, Nat.Prime p) (hβ : 0 < β)
     {m n : finitePrimeSemigroup S} (hmn : m ≠ n) :
     gibbsWeight β m ≠ gibbsWeight β n := by
   intro h
@@ -163,7 +164,12 @@ theorem IsFiniteToeplitzCoreKMS.offDiagonal
     simpa [w, smul_eq_mul] using h
   have hz :
       (1 - w) * φ (finiteToeplitzMonomial hS m n) = 0 := by
-    rw [sub_mul, one_mul, hrel, sub_self]
+    calc
+      (1 - w) * φ (finiteToeplitzMonomial hS m n) =
+          φ (finiteToeplitzMonomial hS m n) -
+            w * φ (finiteToeplitzMonomial hS m n) := by
+              ring
+      _ = 0 := sub_eq_zero.mpr hrel
   exact (mul_eq_zero.mp hz).resolve_left
     (sub_ne_zero.mpr (Ne.symm hw))
 
