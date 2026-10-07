@@ -25,3 +25,4 @@ import BrickPileLean.BostConnes.FiniteAnalyticKMSBoundary
 import BrickPileLean.BostConnes.FiniteToeplitzMatrixCoefficients
 import BrickPileLean.BostConnes.FiniteToeplitzLinearIndependence
 import BrickPileLean.BostConnes.FiniteCoreComplexTime
+import BrickPileLean.BostConnes.FiniteKMSUniquenessRigidity
