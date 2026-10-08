@@ -61,20 +61,14 @@ theorem IsFiniteToeplitzCoreKMS.core_eq_finiteGibbsStateCLM
   exact hφ.expansion_eq_finiteGibbsStateCLM hS hβ
     (finiteToeplitzCoreExpansion hS x)
 
-/-- The canonical inclusion of the algebraic Toeplitz core into its completed
-finite Toeplitz algebra has dense range. -/
-theorem finiteToeplitzCoreToAlgebra_denseRange
+/-- The native inclusion of the algebraic Toeplitz core into its
+topological closure has dense range. -/
+theorem finiteToeplitzCore_inclusion_denseRange
     {S : Finset ℕ} (hS : ∀ p ∈ S, Nat.Prime p) :
-    DenseRange (finiteToeplitzCoreToAlgebra hS) := by
-  change DenseRange
-    (Set.inclusion
-      (StarSubalgebra.le_topologicalClosure (finiteToeplitzCore hS)))
-  rw [denseRange_inclusion_iff]
-  simpa only [StarSubalgebra.topologicalClosure_coe]
-    using
-      (Set.Subset.rfl :
-        closure (finiteToeplitzCore hS : Set (FiniteOperator S)) ⊆
-          closure (finiteToeplitzCore hS : Set (FiniteOperator S)))
+    DenseRange
+      (Set.inclusion
+        (StarSubalgebra.le_topologicalClosure (finiteToeplitzCore hS))) := by
+  simp [-SetLike.coe_sort_coe]
 
 /-- The finite Gibbs functional is the unique normalized bounded functional
 satisfying the KMS boundary identity on the algebraic Toeplitz core. -/
@@ -85,7 +79,7 @@ theorem IsFiniteToeplitzCoreKMS.eq_finiteGibbsStateCLM
     (hφ : IsFiniteToeplitzCoreKMS hS β φ) :
     φ = finiteGibbsStateCLM hS hβ := by
   apply ContinuousLinearMap.coeFn_injective
-  exact (finiteToeplitzCoreToAlgebra_denseRange hS).equalizer
+  exact (finiteToeplitzCore_inclusion_denseRange hS).equalizer
     φ.continuous
     (finiteGibbsStateCLM hS hβ).continuous
     (by
