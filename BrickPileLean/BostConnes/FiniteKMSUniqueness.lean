@@ -18,9 +18,12 @@ theorem IsFiniteToeplitzCoreKMS.monomial_eq_finiteGibbsStateCLM
   by_cases hmn : m = n
   · subst n
     rw [hφ.diagonal hS m]
-    simp [finiteGibbsState_toeplitzMonomial]
+    change ((gibbsWeight β m : ℝ) : ℂ) =
+      gibbsExpectation S β (toeplitzMonomial hS m m)
+    exact (gibbsExpectation_toeplitzMonomial_self hS hβ m).symm
   · rw [hφ.offDiagonal hS hβ hmn]
-    simp [finiteGibbsState_toeplitzMonomial, hmn]
+    change 0 = gibbsExpectation S β (toeplitzMonomial hS m n)
+    exact (gibbsExpectation_toeplitzMonomial_of_ne hS hβ hmn).symm
 
 /-- Equality with the finite Gibbs functional extends from standard monomials
 to every finite monomial expansion. -/
@@ -33,19 +36,15 @@ theorem IsFiniteToeplitzCoreKMS.expansion_eq_finiteGibbsStateCLM
     φ (finiteToeplitzExpansionEvalA hS c) =
       finiteGibbsStateCLM hS hβ (finiteToeplitzExpansionEvalA hS c) := by
   classical
-  induction c using Finsupp.induction with
-  | zero =>
-      simp
-  | single_add i a c hi ha ih =>
-      rw [finiteToeplitzExpansionEvalA_add]
-      rw [map_add, map_add]
-      apply congrArg₂ (fun u v : ℂ => u + v)
-      · rw [finiteToeplitzExpansionEvalA_single]
-        rw [map_smul, map_smul]
-        apply congrArg (fun z : ℂ => a • z)
-        rcases i with ⟨m, n⟩
-        exact hφ.monomial_eq_finiteGibbsStateCLM hS hβ m n
-      · exact ih
+  unfold finiteToeplitzExpansionEvalA
+  simp only [map_finsuppSum]
+  apply Finsupp.sum_congr
+  intro i hi
+  rcases i with ⟨m, n⟩
+  unfold finiteToeplitzMonomialFamilyA
+  rw [map_smul, map_smul]
+  exact congrArg (fun z : ℂ => (c (m, n)) • z)
+    (hφ.monomial_eq_finiteGibbsStateCLM hS hβ m n)
 
 /-- Equality with the finite Gibbs functional holds on the whole algebraic
 Toeplitz core. -/
@@ -70,7 +69,9 @@ theorem finiteToeplitzCoreToAlgebra_denseRange
   change DenseRange
     (Set.inclusion
       (StarSubalgebra.le_topologicalClosure (finiteToeplitzCore hS)))
-  simp [-SetLike.coe_sort_coe]
+  rw [denseRange_inclusion_iff]
+  intro x hx
+  exact hx
 
 /-- The finite Gibbs functional is the unique normalized bounded functional
 satisfying the KMS boundary identity on the algebraic Toeplitz core. -/
