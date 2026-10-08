@@ -123,10 +123,11 @@ theorem gibbsExpectation_shiftAdjoint_mul_shiftOperator
       if m = n then 1 else 0 := by
   by_cases hmn : m = n
   · subst n
-    rw [if_pos rfl, shiftAdjoint_mul_shiftOperator_self,
+    rw [shiftAdjoint_mul_shiftOperator_self,
       gibbsExpectation_one hS hβ]
-  · rw [if_neg hmn,
-      gibbsExpectation_shiftAdjoint_mul_shiftOperator_of_ne hS hβ hmn]
+    simp
+  · rw [gibbsExpectation_shiftAdjoint_mul_shiftOperator_of_ne hS hβ hmn]
+    simp [hmn]
 
 /-- The packaged Gibbs state has the same reverse-product formula. -/
 theorem finiteGibbsState_reverseToeplitzMonomial
