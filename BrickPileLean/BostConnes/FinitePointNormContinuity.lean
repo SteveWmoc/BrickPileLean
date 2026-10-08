@@ -90,9 +90,14 @@ theorem continuous_ambientTimeEvolution_core
           change ambientTimeStarAlgEquiv S t
               (star (x : FiniteOperator S)) =
             star (ambientTimeEvolution S t (x : FiniteOperator S))
-          rw [map_star, ambientTimeStarAlgEquiv_apply]
+          rw [ambientTimeStarAlgEquiv_apply]
+          exact map_star (ambientTimeStarAlgEquiv S t) (x : FiniteOperator S)
         rw [heq]
-        exact hx.star
+        simpa only [ContinuousLinearMap.star_eq_adjoint] using
+          (ContinuousLinearMap.adjoint
+            (𝕜 := ℂ)
+            (E := FiniteHilbertSpace S)
+            (F := FiniteHilbertSpace S)).continuous.comp hx
   exact hcore a₀
 
 /-- Each ambient time automorphism preserves distances. -/
