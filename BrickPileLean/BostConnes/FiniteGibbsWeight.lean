@@ -150,7 +150,6 @@ theorem gibbsOperator_basisVector
   rw [hmap]
   rw [tsum_eq_single m]
   · simp [gibbsOperatorTerm, basisProjection_apply_basisVector]
-    rfl
   · intro n hnm
     simp [gibbsOperatorTerm, basisProjection_apply_basisVector, hnm]
 
