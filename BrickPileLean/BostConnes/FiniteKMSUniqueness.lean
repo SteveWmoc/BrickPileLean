@@ -70,8 +70,7 @@ theorem finiteToeplitzCoreToAlgebra_denseRange
     (Set.inclusion
       (StarSubalgebra.le_topologicalClosure (finiteToeplitzCore hS)))
   rw [denseRange_inclusion_iff]
-  intro x hx
-  exact hx
+  exact subset_closure
 
 /-- The finite Gibbs functional is the unique normalized bounded functional
 satisfying the KMS boundary identity on the algebraic Toeplitz core. -/
