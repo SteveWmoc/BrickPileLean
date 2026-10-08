@@ -59,14 +59,12 @@ def divisibilityCoefficient
 @[simp] theorem divisibilityCoefficient_of_dvd
     {S : Finset ℕ} {m k : finitePrimeSemigroup S} (h : m ∣ k) :
     divisibilityCoefficient m k = 1 := by
-  unfold divisibilityCoefficient
-  rw [if_pos h]
+  simp [divisibilityCoefficient, h]
 
 @[simp] theorem divisibilityCoefficient_of_not_dvd
     {S : Finset ℕ} {m k : finitePrimeSemigroup S} (h : ¬ m ∣ k) :
     divisibilityCoefficient m k = 0 := by
-  unfold divisibilityCoefficient
-  rw [if_neg h]
+  simp [divisibilityCoefficient, h]
 
 /-- The normalized Gibbs weight restricted to multiples of `m`. -/
 def gibbsMultipleProbabilityWeight
@@ -78,14 +76,12 @@ def gibbsMultipleProbabilityWeight
 @[simp] theorem gibbsMultipleProbabilityWeight_of_dvd
     {S : Finset ℕ} {β : ℝ} {m k : finitePrimeSemigroup S} (h : m ∣ k) :
     gibbsMultipleProbabilityWeight S β m k = gibbsProbabilityWeight S β k := by
-  unfold gibbsMultipleProbabilityWeight
-  rw [if_pos h]
+  simp [gibbsMultipleProbabilityWeight, h]
 
 @[simp] theorem gibbsMultipleProbabilityWeight_of_not_dvd
     {S : Finset ℕ} {β : ℝ} {m k : finitePrimeSemigroup S} (h : ¬ m ∣ k) :
     gibbsMultipleProbabilityWeight S β m k = 0 := by
-  unfold gibbsMultipleProbabilityWeight
-  rw [if_neg h]
+  simp [gibbsMultipleProbabilityWeight, h]
 
 /-- One term in the Gibbs expectation of a bounded operator. -/
 def gibbsExpectationTerm
