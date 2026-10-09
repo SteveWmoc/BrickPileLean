@@ -193,22 +193,55 @@ theorem IsFiniteToeplitzCoreKMS.diagonal
   have hw :
       w = ((gibbsWeight β m : ℝ) : ℂ) := by
     simp [w, finiteToeplitzMonomialKMSWeight, gibbsWeight]
+  have hleft :
+      finiteToeplitzMonomial hS m (1 : finitePrimeSemigroup S) *
+          finiteToeplitzMonomial hS 1 m =
+        finiteToeplitzMonomial hS m m :=
+    finiteToeplitzMonomial_mul_matching hS m 1 m
+  have hcancel :
+      finiteToeplitzMonomial hS (1 : finitePrimeSemigroup S) m *
+          finiteToeplitzMonomial hS m 1 =
+        (1 : finiteToeplitzAlgebra hS) := by
+    calc
+      finiteToeplitzMonomial hS (1 : finitePrimeSemigroup S) m *
+          finiteToeplitzMonomial hS m 1 =
+          finiteToeplitzMonomial hS 1 1 :=
+        finiteToeplitzMonomial_mul_matching hS 1 m 1
+      _ = (1 : finiteToeplitzAlgebra hS) :=
+        finiteToeplitzMonomial_one_one hS
+  have hright :
+      finiteToeplitzMonomial hS (1 : finitePrimeSemigroup S) m *
+          (w • finiteToeplitzMonomial hS m 1) =
+        w • (1 : finiteToeplitzAlgebra hS) := by
+    calc
+      finiteToeplitzMonomial hS (1 : finitePrimeSemigroup S) m *
+          (w • finiteToeplitzMonomial hS m 1) =
+          w • (finiteToeplitzMonomial hS 1 m *
+            finiteToeplitzMonomial hS m 1) :=
+        Algebra.mul_smul_comm w
+          (finiteToeplitzMonomial hS 1 m)
+          (finiteToeplitzMonomial hS m 1)
+      _ = w • (1 : finiteToeplitzAlgebra hS) :=
+        congrArg (fun X : finiteToeplitzAlgebra hS => w • X) hcancel
+  have h' :
+      φ (finiteToeplitzMonomial hS m m) =
+        φ (w • (1 : finiteToeplitzAlgebra hS)) := by
+    calc
+      φ (finiteToeplitzMonomial hS m m) =
+          φ (finiteToeplitzMonomial hS m 1 *
+            finiteToeplitzMonomial hS 1 m) :=
+        congrArg φ hleft.symm
+      _ = φ (finiteToeplitzMonomial hS 1 m *
+          (w • finiteToeplitzMonomial hS m 1)) := by
+        simpa only [w] using h
+      _ = φ (w • (1 : finiteToeplitzAlgebra hS)) :=
+        congrArg φ hright
   calc
     φ (finiteToeplitzMonomial hS m m) =
-        φ (finiteToeplitzMonomial hS 1 m *
-          (w • finiteToeplitzMonomial hS m 1)) := by
-      simpa only [finiteToeplitzMonomial_mul_matching, w] using h
-    _ = φ (w •
-        (finiteToeplitzMonomial hS 1 m *
-          finiteToeplitzMonomial hS m 1)) := by
-      rw [mul_smul_comm]
-    _ = φ (w • (1 : finiteToeplitzAlgebra hS)) := by
-      rw [finiteToeplitzMonomial_mul_matching,
-        finiteToeplitzMonomial_one_one]
-    _ = w * φ 1 := by
-      simp only [map_smul, smul_eq_mul]
-    _ = w := by
-      rw [hone, mul_one]
+        φ (w • (1 : finiteToeplitzAlgebra hS)) := h'
+    _ = w • φ 1 := φ.map_smul w 1
+    _ = w • 1 := congrArg (fun z : ℂ => w • z) hone
+    _ = w := by simp
     _ = ((gibbsWeight β m : ℝ) : ℂ) := hw
 
 end
