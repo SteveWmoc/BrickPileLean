@@ -121,15 +121,15 @@ theorem finiteToeplitzExpansionEvalA_coe
       FiniteOperator S) =
       finiteToeplitzExpansionEval hS c := by
   classical
-  letI : AddCommMonoid (finiteToeplitzAlgebra hS) := by
+  haveI : AddCommMonoid (finiteToeplitzAlgebra hS) := by
     change AddCommMonoid
       ((StarAlgebra.adjoin ℂ (primeShiftSet hS)).topologicalClosure)
     infer_instance
   rw [finiteToeplitzExpansionEvalA, finiteToeplitzExpansionEval]
-  let ι : finiteToeplitzAlgebra hS →ₗ[ℂ] FiniteOperator S :=
+  let ι : finiteToeplitzAlgebra hS →+ FiniteOperator S :=
     { toFun := fun x => (x : FiniteOperator S)
-      map_add' := fun _ _ => rfl
-      map_smul' := fun _ _ => rfl }
+      map_zero' := rfl
+      map_add' := fun _ _ => rfl }
   change ι (c.sum fun i a => a • finiteToeplitzMonomialFamilyA hS i) =
     c.sum fun i a => a • finiteToeplitzMonomialFamily hS i
   rw [map_finsuppSum ι c]
