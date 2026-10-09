@@ -146,7 +146,7 @@ theorem gibbsExpectation_nonneg
   unfold gibbsExpectationTerm
   apply mul_nonneg
   · exact Complex.zero_le_real.mpr (gibbsProbabilityWeight_nonneg hS hβ k)
-  · exact ((ContinuousLinearMap.nonneg_iff_isPositive a).mp ha).inner_nonneg_right
+  · exact ((ContinuousLinearMap.nonneg_iff_isPositive).mp ha).inner_nonneg_right
       (basisVector S k)
 
 /-- The Gibbs expectation as a positive linear functional on all bounded operators. -/

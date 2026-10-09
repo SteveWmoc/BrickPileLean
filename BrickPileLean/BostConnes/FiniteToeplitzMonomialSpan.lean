@@ -104,11 +104,15 @@ theorem finiteToeplitzMonomialSpan_star_mem
       rw [star_toeplitzMonomial]
       exact toeplitzMonomial_mem_finiteToeplitzMonomialSpan hS n m
   | zero =>
-      simp
+      change ContinuousLinearMap.adjoint (0 : FiniteOperator S) ∈
+        finiteToeplitzMonomialSpan hS
+      rw [map_zero]
+      exact (finiteToeplitzMonomialSpan hS).zero_mem
   | add x y _ _ hx hy =>
-      have hadd :=
-        (finiteToeplitzMonomialSpan hS).add_mem hx hy
-      simpa using hadd
+      change ContinuousLinearMap.adjoint (x + y) ∈
+        finiteToeplitzMonomialSpan hS
+      rw [map_add]
+      exact (finiteToeplitzMonomialSpan hS).add_mem hx hy
   | smul c x _ hx =>
       have hmem :
           star c • star x ∈ finiteToeplitzMonomialSpan hS :=
@@ -148,7 +152,8 @@ theorem finiteToeplitzCore_le_monomialSpan
       have hc :
           c • (1 : FiniteOperator S) ∈ finiteToeplitzMonomialSpan hS :=
         (finiteToeplitzMonomialSpan hS).smul_mem c h1
-      simpa [Algebra.smul_def] using hc
+      rw [Algebra.algebraMap_eq_smul_one]
+      exact hc
   | add x y _ _ hx hy =>
       exact add_mem hx hy
   | mul x y _ _ hx hy =>

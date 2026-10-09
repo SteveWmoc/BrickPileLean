@@ -166,12 +166,14 @@ theorem finiteGibbsState_kms_toeplitzMonomials_cross
         finiteGibbsState hS hβ
             (finiteToeplitzMonomial hS m n * finiteToeplitzMonomial hS r s) =
           ((gibbsWeight β (m * b) : ℝ) : ℂ) := by
-      rw [hAB, finiteGibbsState_toeplitzMonomial, if_pos hres]
+      rw [hAB, finiteGibbsState_toeplitzMonomial]
+      simp [hres]
     have hphiBA :
         finiteGibbsState hS hβ
             (finiteToeplitzMonomial hS r s * finiteToeplitzMonomial hS m n) =
           ((gibbsWeight β ((d * b) * a) : ℝ) : ℂ) := by
-      rw [hBA, finiteGibbsState_toeplitzMonomial, if_pos hdiagBA]
+      rw [hBA, finiteGibbsState_toeplitzMonomial]
+      simp [hdiagBA]
     rw [hphiAB, hphiBA]
     have hweight :
         gibbsWeight β n * gibbsWeight β (m * b) =

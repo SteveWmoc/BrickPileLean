@@ -121,12 +121,18 @@ theorem finiteToeplitzExpansionEvalA_coe
       FiniteOperator S) =
       finiteToeplitzExpansionEval hS c := by
   classical
-  rw [finiteToeplitzExpansionEvalA, finiteToeplitzExpansionEval]
-  change (finiteToeplitzAlgebra hS).subtype
-      (c.sum fun i a => a • finiteToeplitzMonomialFamilyA hS i) =
-    c.sum fun i a => a • finiteToeplitzMonomialFamily hS i
-  rw [map_finsuppSum]
-  simp [finiteToeplitzMonomialFamilyA, finiteToeplitzMonomialFamily]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [finiteToeplitzExpansionEvalA, finiteToeplitzExpansionEval]
+    let ι : finiteToeplitzAlgebra hS →+ FiniteOperator S :=
+      { toFun := fun x => (x : FiniteOperator S)
+        map_zero' := rfl
+        map_add' := fun _ _ => rfl }
+    change ι (c.sum fun i a => a • finiteToeplitzMonomialFamilyA hS i) =
+      c.sum fun i a => a • finiteToeplitzMonomialFamily hS i
+    rw [map_finsuppSum ι c]
+    apply Finsupp.sum_congr
+    intro i hi
+    rfl
 
 /-- The chosen finite expansion also recovers the core element after
 inclusion into the completed finite Toeplitz algebra. -/

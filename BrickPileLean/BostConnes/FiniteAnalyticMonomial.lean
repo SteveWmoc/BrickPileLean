@@ -70,7 +70,7 @@ theorem ambientTimeEvolution_shiftAdjoint
         ambientTimeStarAlgEquiv S t (star (shiftOperator hS m)) := by
           congr 1
     _ = star (ambientTimeStarAlgEquiv S t (shiftOperator hS m)) := by
-          rw [map_star]
+          exact map_star (ambientTimeStarAlgEquiv S t) (shiftOperator hS m)
     _ = star (timePhase t m • shiftOperator hS m) := by
           rw [ambientTimeStarAlgEquiv_apply, ambientTimeEvolution_shift]
     _ = timePhase (-t) m • shiftAdjoint hS m := by

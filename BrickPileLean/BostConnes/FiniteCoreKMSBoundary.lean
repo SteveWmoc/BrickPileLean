@@ -41,7 +41,8 @@ def finiteToeplitzExpansionKMSBoundaryA
         finiteToeplitzExpansionEvalA hS d := by
   classical
   unfold finiteToeplitzExpansionEvalA
-  exact Finsupp.sum_add_index (by simp) (by simp [add_smul])
+  set_option synthInstance.maxHeartbeats 100000 in
+    exact Finsupp.sum_add_index (by simp) (by simp [add_smul])
 
 @[simp] theorem finiteToeplitzExpansionEvalA_single
     {S : Finset ℕ} (hS : ∀ p ∈ S, Nat.Prime p)
@@ -49,7 +50,8 @@ def finiteToeplitzExpansionKMSBoundaryA
     finiteToeplitzExpansionEvalA hS (Finsupp.single i a) =
       a • finiteToeplitzMonomialFamilyA hS i := by
   classical
-  simp [finiteToeplitzExpansionEvalA]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [finiteToeplitzExpansionEvalA]
 
 @[simp] theorem finiteToeplitzExpansionKMSBoundaryA_zero
     {S : Finset ℕ} (hS : ∀ p ∈ S, Nat.Prime p) (β : ℝ) :
@@ -65,7 +67,8 @@ def finiteToeplitzExpansionKMSBoundaryA
         finiteToeplitzExpansionKMSBoundaryA hS β d := by
   classical
   unfold finiteToeplitzExpansionKMSBoundaryA
-  exact Finsupp.sum_add_index (by simp) (by simp [add_smul])
+  set_option synthInstance.maxHeartbeats 100000 in
+    exact Finsupp.sum_add_index (by simp) (by simp [add_smul])
 
 @[simp] theorem finiteToeplitzExpansionKMSBoundaryA_single
     {S : Finset ℕ} (hS : ∀ p ∈ S, Nat.Prime p) (β : ℝ)
@@ -73,7 +76,8 @@ def finiteToeplitzExpansionKMSBoundaryA
     finiteToeplitzExpansionKMSBoundaryA hS β (Finsupp.single i a) =
       a • finiteToeplitzKMSBoundaryFamilyA hS β i := by
   classical
-  simp [finiteToeplitzExpansionKMSBoundaryA]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [finiteToeplitzExpansionKMSBoundaryA]
 
 /-- Pull a scalar through multiplication in the second factor and then
 through the Gibbs functional. -/
