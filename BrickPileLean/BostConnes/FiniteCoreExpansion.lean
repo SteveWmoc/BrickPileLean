@@ -133,7 +133,8 @@ theorem finiteToeplitzExpansionEvalA_coe
         FiniteOperator S)) =
         ι (c.sum fun i a => a • finiteToeplitzMonomialFamilyA hS i) := rfl
     _ = c.sum fun i a => a • finiteToeplitzMonomialFamily hS i := by
-      rw [map_finsuppSum ι c]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_finsuppSum ι c]
       apply Finsupp.sum_congr
       intro i hi
       rfl
