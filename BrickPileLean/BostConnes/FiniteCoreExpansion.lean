@@ -121,23 +121,18 @@ theorem finiteToeplitzExpansionEvalA_coe
       FiniteOperator S) =
       finiteToeplitzExpansionEval hS c := by
   classical
-  rw [finiteToeplitzExpansionEvalA, finiteToeplitzExpansionEval]
-  let ι :
-      ((StarAlgebra.adjoin ℂ (primeShiftSet hS)).topologicalClosure) →+
-        FiniteOperator S :=
-    { toFun := fun x => (x : FiniteOperator S)
-      map_zero' := rfl
-      map_add' := fun _ _ => rfl }
-  calc
-    ((↑(c.sum fun i a => a • finiteToeplitzMonomialFamilyA hS i) :
-        FiniteOperator S)) =
-        ι (c.sum fun i a => a • finiteToeplitzMonomialFamilyA hS i) := rfl
-    _ = c.sum fun i a => a • finiteToeplitzMonomialFamily hS i := by
-      set_option synthInstance.maxHeartbeats 100000 in
-        rw [map_finsuppSum ι c]
-      apply Finsupp.sum_congr
-      intro i hi
-      rfl
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [finiteToeplitzExpansionEvalA, finiteToeplitzExpansionEval]
+    let ι : finiteToeplitzAlgebra hS →+ FiniteOperator S :=
+      { toFun := fun x => (x : FiniteOperator S)
+        map_zero' := rfl
+        map_add' := fun _ _ => rfl }
+    change ι (c.sum fun i a => a • finiteToeplitzMonomialFamilyA hS i) =
+      c.sum fun i a => a • finiteToeplitzMonomialFamily hS i
+    rw [map_finsuppSum ι c]
+    apply Finsupp.sum_congr
+    intro i hi
+    rfl
 
 /-- The chosen finite expansion also recovers the core element after
 inclusion into the completed finite Toeplitz algebra. -/
