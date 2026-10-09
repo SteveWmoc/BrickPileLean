@@ -121,6 +121,10 @@ theorem finiteToeplitzExpansionEvalA_coe
       FiniteOperator S) =
       finiteToeplitzExpansionEval hS c := by
   classical
+  letI : AddCommMonoid (finiteToeplitzAlgebra hS) := by
+    change AddCommMonoid
+      ((StarAlgebra.adjoin ℂ (primeShiftSet hS)).topologicalClosure)
+    infer_instance
   rw [finiteToeplitzExpansionEvalA, finiteToeplitzExpansionEval]
   let ι : finiteToeplitzAlgebra hS →ₗ[ℂ] FiniteOperator S :=
     { toFun := fun x => (x : FiniteOperator S)
