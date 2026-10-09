@@ -122,11 +122,16 @@ theorem finiteToeplitzExpansionEvalA_coe
       finiteToeplitzExpansionEval hS c := by
   classical
   rw [finiteToeplitzExpansionEvalA, finiteToeplitzExpansionEval]
-  change (finiteToeplitzAlgebra hS).subtype
-      (c.sum fun i a => a • finiteToeplitzMonomialFamilyA hS i) =
+  let ι : finiteToeplitzAlgebra hS →ₗ[ℂ] FiniteOperator S :=
+    { toFun := fun x => (x : FiniteOperator S)
+      map_add' := fun _ _ => rfl
+      map_smul' := fun _ _ => rfl }
+  change ι (c.sum fun i a => a • finiteToeplitzMonomialFamilyA hS i) =
     c.sum fun i a => a • finiteToeplitzMonomialFamily hS i
-  rw [map_finsuppSum]
-  simp [finiteToeplitzMonomialFamilyA, finiteToeplitzMonomialFamily]
+  rw [map_finsuppSum ι c]
+  apply Finsupp.sum_congr
+  intro i hi
+  rfl
 
 /-- The chosen finite expansion also recovers the core element after
 inclusion into the completed finite Toeplitz algebra. -/
