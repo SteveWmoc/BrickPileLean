@@ -81,9 +81,10 @@ theorem finiteToeplitzCoreComplexTimeA_monomial
   rw [← finiteToeplitzExpansionComplexTimeA_eq_core
     hS z (finiteToeplitzCoreMonomial hS m n) c hc]
   dsimp [c]
-  simp [finiteToeplitzExpansionComplexTimeA,
-    finiteToeplitzComplexTimeFamilyA,
-    finiteToeplitzMonomialFamilyA]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [finiteToeplitzExpansionComplexTimeA,
+      finiteToeplitzComplexTimeFamilyA,
+      finiteToeplitzMonomialFamilyA]
 
 /-- The core KMS condition gives the expected weighted boundary identity on
 standard monomials for an arbitrary normalized bounded KMS functional. -/
@@ -186,8 +187,29 @@ theorem IsFiniteToeplitzCoreKMS.diagonal
   have h := hφ.monomials hS
     m 1 (1 : finitePrimeSemigroup S) m
   have hone : φ 1 = 1 := hφ.1
-  simpa [finiteToeplitzMonomialKMSWeight, gibbsWeight, hone,
-    smul_eq_mul] using h
+  let w : ℂ :=
+    finiteToeplitzMonomialKMSWeight β
+      (m, (1 : finitePrimeSemigroup S))
+  have hw :
+      w = ((gibbsWeight β m : ℝ) : ℂ) := by
+    simp [w, finiteToeplitzMonomialKMSWeight, gibbsWeight]
+  calc
+    φ (finiteToeplitzMonomial hS m m) =
+        φ (finiteToeplitzMonomial hS 1 m *
+          (w • finiteToeplitzMonomial hS m 1)) := by
+      simpa only [finiteToeplitzMonomial_mul_matching, w] using h
+    _ = φ (w •
+        (finiteToeplitzMonomial hS 1 m *
+          finiteToeplitzMonomial hS m 1)) := by
+      rw [mul_smul_comm]
+    _ = φ (w • (1 : finiteToeplitzAlgebra hS)) := by
+      rw [finiteToeplitzMonomial_mul_matching,
+        finiteToeplitzMonomial_one_one]
+    _ = w * φ 1 := by
+      simp only [map_smul, smul_eq_mul]
+    _ = w := by
+      rw [hone, mul_one]
+    _ = ((gibbsWeight β m : ℝ) : ℂ) := hw
 
 end
 
