@@ -75,9 +75,16 @@ theorem finiteToeplitzExpansionComplexTimeA_analyticOnNhd
               a • finiteToeplitzComplexTimeFamilyA hS z i) Set.univ := by
         exact analyticOnNhd_const.smul
           (finiteToeplitzComplexTimeFamilyA_analyticOnNhd hS i)
-      simpa only [finiteToeplitzExpansionComplexTimeA_add,
-        finiteToeplitzExpansionComplexTimeA_single, Pi.add_apply] using
-        hsingle.add ih
+      have hfun :
+          (fun z : ℂ =>
+            finiteToeplitzExpansionComplexTimeA hS z (Finsupp.single i a + c)) =
+            (fun z : ℂ => a • finiteToeplitzComplexTimeFamilyA hS z i) +
+              (fun z : ℂ => finiteToeplitzExpansionComplexTimeA hS z c) := by
+        funext z
+        simp only [finiteToeplitzExpansionComplexTimeA_add,
+          finiteToeplitzExpansionComplexTimeA_single, Pi.add_apply]
+      rw [hfun]
+      exact hsingle.add ih
 
 /-- The intrinsic complex-time continuation of every algebraic-core element
 is entire. This is the Banach-valued analyticity statement used in the
