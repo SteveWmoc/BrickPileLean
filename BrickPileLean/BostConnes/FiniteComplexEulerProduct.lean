@@ -27,7 +27,9 @@ theorem complexLocalRatio_analyticOnNhd (p : ℕ) :
 /-- The modulus of a local ratio depends only on the real part of `s`. -/
 theorem norm_complexLocalRatio (p : ℕ) (s : ℂ) :
     ‖complexLocalRatio p s‖ = Real.exp (-s.re * Real.log (p : ℝ)) := by
-  simp [complexLocalRatio, Complex.norm_exp, Complex.mul_re]
+  simp only [complexLocalRatio, Complex.norm_exp, Complex.mul_re,
+    Complex.neg_re, Complex.neg_im, Complex.ofReal_re, Complex.ofReal_im,
+    mul_zero, sub_zero]
 
 /-- On the right half-plane the local geometric ratio has modulus below one. -/
 theorem norm_complexLocalRatio_lt_one {p : ℕ} {s : ℂ}
