@@ -1,5 +1,6 @@
 import BrickPileLean.BostConnes.FiniteEulerProduct
 import BrickPileLean.BostConnes.FiniteComplexEulerProduct
+import BrickPileLean.BostConnes.FiniteComplexPartition
 import BrickPileLean.BostConnes.ExponentVectorPartition
 import BrickPileLean.BostConnes.FinitePrimeSemigroup
 import BrickPileLean.BostConnes.LambdaPartition
