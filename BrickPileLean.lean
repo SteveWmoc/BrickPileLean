@@ -30,3 +30,4 @@ import BrickPileLean.BostConnes.FiniteCoreComplexTime
 import BrickPileLean.BostConnes.FiniteCoreEntireAnalyticity
 import BrickPileLean.BostConnes.FiniteKMSUniquenessRigidity
 import BrickPileLean.BostConnes.FiniteKMSUniqueness
+import BrickPileLean.BostConnes.FiniteEnergy
