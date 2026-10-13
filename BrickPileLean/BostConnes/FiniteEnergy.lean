@@ -57,7 +57,12 @@ theorem gibbsOperator_basisVector_energy {S : Finset ℕ} {β : ℝ}
 theorem summable_exp_neg_finiteEnergy {S : Finset ℕ} {β : ℝ}
     (hS : ∀ p ∈ S, Nat.Prime p) (hβ : 0 < β) :
     Summable (fun n : finitePrimeSemigroup S => Real.exp (-β * finiteEnergy n)) := by
-  simpa only [gibbsWeight_eq_exp_neg_energy hS] using gibbsWeight_summable hS hβ
+  have hfun : gibbsWeight (S := S) β =
+      (fun n : finitePrimeSemigroup S => Real.exp (-β * finiteEnergy n)) := by
+    funext n
+    exact gibbsWeight_eq_exp_neg_energy hS β n
+  rw [← hfun]
+  exact gibbsWeight_summable hS hβ
 
 /-- The sum of Boltzmann energy eigenvalues equals the finite Euler product.
 This is a spectral sum identity; an operator trace requires trace-class theory. -/
