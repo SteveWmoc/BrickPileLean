@@ -3,6 +3,8 @@ import BrickPileLean.BostConnes.FiniteEnergy
 namespace BrickPileLean
 namespace BostConnes
 
+open scoped ENNReal
+
 noncomputable section
 
 /-- Coordinate multiplication by the arithmetic energy, before imposing the
@@ -61,11 +63,12 @@ theorem finiteHamiltonianCoefficients_basisVector (S : Finset ℕ)
       ⇑((finiteEnergy n : ℂ) • basisVector S n) := by
   classical
   funext k
+  change (finiteEnergy k : ℂ) * basisVector S n k =
+    (finiteEnergy n : ℂ) * basisVector S n k
   by_cases h : k = n
   · subst k
-    simp [finiteHamiltonianCoefficients, basisVector, lp.coeFn_smul]
-  · simp [finiteHamiltonianCoefficients, basisVector, lp.coeFn_smul,
-      lp.single_apply, Pi.single_apply, h, Ne.symm h]
+    rfl
+  · simp [basisVector, lp.single_apply, h]
 
 /-- Every canonical basis vector lies in the natural Hamiltonian domain. -/
 theorem basisVector_mem_finiteHamiltonianDomain (S : Finset ℕ)
