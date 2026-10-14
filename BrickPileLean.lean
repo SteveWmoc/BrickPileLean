@@ -31,3 +31,4 @@ import BrickPileLean.BostConnes.FiniteCoreEntireAnalyticity
 import BrickPileLean.BostConnes.FiniteKMSUniquenessRigidity
 import BrickPileLean.BostConnes.FiniteKMSUniqueness
 import BrickPileLean.BostConnes.FiniteEnergy
+import BrickPileLean.BostConnes.FiniteHamiltonian
