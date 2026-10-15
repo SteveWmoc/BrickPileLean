@@ -14,7 +14,8 @@ theorem hasSum_basisVector (S : Finset ℕ) (x : FiniteHilbertSpace S) :
   have hsingle (n : finitePrimeSemigroup S) :
       lp.single 2 n (x n) = x n • basisVector S n := by
     simpa only [basisVector, smul_eq_mul, mul_one] using
-      (lp.single_smul 2 n (x n) (1 : ℂ))
+      (lp.single_smul (E := fun _ : finitePrimeSemigroup S => ℂ)
+        2 n (x n) (1 : ℂ))
   simpa only [hsingle] using (lp.hasSum_single ENNReal.ofNat_ne_top x)
 
 /-- The finite linear span of the canonical basis is contained in the natural
