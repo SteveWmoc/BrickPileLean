@@ -33,3 +33,4 @@ import BrickPileLean.BostConnes.FiniteKMSUniqueness
 import BrickPileLean.BostConnes.FiniteEnergy
 import BrickPileLean.BostConnes.FiniteHamiltonian
 import BrickPileLean.BostConnes.FiniteHamiltonianDensity
+import BrickPileLean.BostConnes.FiniteHamiltonianSymmetry
