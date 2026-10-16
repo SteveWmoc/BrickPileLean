@@ -18,7 +18,8 @@ theorem finiteHamiltonian_symmetric (S : Finset ℕ)
   intro n
   change inner ℂ ((finiteEnergy n : ℂ) • x.1 n) (y.1 n) =
     inner ℂ (x.1 n) ((finiteEnergy n : ℂ) • y.1 n)
-  simp [inner_smul_left, inner_smul_right]
+  rw [inner_smul_left, inner_smul_right]
+  simp
 
 /-- The diagonal quadratic form at one coordinate is energy times squared norm. -/
 theorem finiteHamiltonian_coordinate_quadratic (S : Finset ℕ)
@@ -27,7 +28,7 @@ theorem finiteHamiltonian_coordinate_quadratic (S : Finset ℕ)
       finiteEnergy n * ‖x.1 n‖ ^ 2 := by
   change (inner ℂ (x.1 n) ((finiteEnergy n : ℂ) • x.1 n)).re = _
   rw [inner_smul_right, inner_self_eq_norm_sq_to_K]
-  simp
+  simp only [← Complex.ofReal_pow, ← Complex.ofReal_mul, Complex.ofReal_re]
 
 /-- The energy quadratic-form series converges for every vector in the
 Hamiltonian domain, by summability of the Hilbert-space inner product. -/
@@ -35,7 +36,7 @@ theorem hasSum_finiteHamiltonian_quadratic (S : Finset ℕ)
     (x : finiteHamiltonianDomain S) :
     HasSum (fun n : finitePrimeSemigroup S => finiteEnergy n * ‖x.1 n‖ ^ 2)
       (inner ℂ x.1 (finiteHamiltonian S x)).re := by
-  have h := RCLike.hasSum_re
+  have h := RCLike.hasSum_re ℂ
     (lp.hasSum_inner (𝕜 := ℂ) x.1 (finiteHamiltonian S x))
   simpa only [finiteHamiltonian_coordinate_quadratic] using h
 
