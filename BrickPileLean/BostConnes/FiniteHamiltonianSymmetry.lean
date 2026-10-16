@@ -28,7 +28,8 @@ theorem finiteHamiltonian_coordinate_quadratic (S : Finset ℕ)
       finiteEnergy n * ‖x.1 n‖ ^ 2 := by
   change (inner ℂ (x.1 n) ((finiteEnergy n : ℂ) • x.1 n)).re = _
   rw [inner_smul_right, inner_self_eq_norm_sq_to_K]
-  simp only [← Complex.ofReal_pow, ← Complex.ofReal_mul, Complex.ofReal_re]
+  change (Complex.ofReal (finiteEnergy n) * Complex.ofReal ‖x.1 n‖ ^ 2).re = _
+  rw [← Complex.ofReal_pow, ← Complex.ofReal_mul, Complex.ofReal_re]
 
 /-- The energy quadratic-form series converges for every vector in the
 Hamiltonian domain, by summability of the Hilbert-space inner product. -/
@@ -38,6 +39,8 @@ theorem hasSum_finiteHamiltonian_quadratic (S : Finset ℕ)
       (inner ℂ x.1 (finiteHamiltonian S x)).re := by
   have h := RCLike.hasSum_re ℂ
     (lp.hasSum_inner (𝕜 := ℂ) x.1 (finiteHamiltonian S x))
+  change HasSum (fun n => (inner ℂ (x.1 n) (finiteHamiltonian S x n)).re)
+    (inner ℂ x.1 (finiteHamiltonian S x)).re at h
   simpa only [finiteHamiltonian_coordinate_quadratic] using h
 
 /-- Summability form of the energy quadratic-form expansion. -/
