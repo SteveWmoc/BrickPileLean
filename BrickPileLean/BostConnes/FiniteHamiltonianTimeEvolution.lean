@@ -19,8 +19,8 @@ theorem timeOperator_apply_coordinate (S : Finset ℕ) (t : ℝ)
     intro m
     apply ContinuousLinearMap.ext
     intro z
-    change timeOperator S t (lp.single 2 m z) n =
-      timePhase t n * lp.single 2 m z n
+    change timeOperator S t (lp.single (E := fun _ : finitePrimeSemigroup S => ℂ) 2 m z) n =
+      timePhase t n * lp.single (E := fun _ : finitePrimeSemigroup S => ℂ) 2 m z n
     rw [timeOperator_single]
     by_cases h : n = m
     · subst m
