@@ -25,7 +25,7 @@ theorem timeOperator_apply_coordinate (S : Finset ℕ) (t : ℝ)
     by_cases h : n = m
     · subst m
       simp
-    · simp [lp.single_apply, Pi.single_apply, h]
+    · simp [lp.single_apply, h]
   exact congrArg (fun f : FiniteHilbertSpace S →L[ℂ] ℂ => f x) hmaps
 
 /-- Real time preserves each coordinate norm. -/
