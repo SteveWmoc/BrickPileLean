@@ -17,7 +17,8 @@ theorem timeOperator_apply_coordinate (S : Finset ℕ) (t : ℝ)
   have hmaps : ev.comp (timeOperator S t) = timePhase t n • ev := by
     refine lp.ext_continuousLinearMap (ENNReal.ofNat_ne_top (n := 2)) ?_
     intro m
-    ext z
+    apply ContinuousLinearMap.ext
+    intro z
     change timeOperator S t (lp.single 2 m z) n =
       timePhase t n * lp.single 2 m z n
     rw [timeOperator_single]
