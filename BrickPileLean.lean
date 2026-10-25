@@ -35,3 +35,4 @@ import BrickPileLean.BostConnes.FiniteHamiltonian
 import BrickPileLean.BostConnes.FiniteHamiltonianDensity
 import BrickPileLean.BostConnes.FiniteHamiltonianSymmetry
 import BrickPileLean.BostConnes.FiniteHamiltonianSelfAdjoint
+import BrickPileLean.BostConnes.FiniteHamiltonianTimeEvolution
