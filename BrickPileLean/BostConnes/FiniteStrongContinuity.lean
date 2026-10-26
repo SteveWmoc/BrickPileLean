@@ -24,8 +24,10 @@ theorem continuous_timeOperator_basis_sum (S : Finset ℕ)
     funext t
     simp only [map_sum, map_smul, timeOperator_basisVector]
   rw [hfun]
+  simp_rw [smul_smul]
   exact continuous_finset_sum F (fun n _ =>
-    continuous_const.smul ((continuous_timePhase n).smul continuous_const))
+    (continuous_const.mul (continuous_timePhase n)).smul
+      (continuous_const : Continuous (fun _ : ℝ => basisVector S n)))
 
 /-- The diagonal unitary group is strongly continuous: every Hilbert-space
 vector, including one with infinite support, has a norm-continuous orbit. -/
