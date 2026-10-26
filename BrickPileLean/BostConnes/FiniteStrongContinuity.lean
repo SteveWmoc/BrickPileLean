@@ -25,7 +25,7 @@ theorem continuous_timeOperator_basis_sum (S : Finset ℕ)
     simp only [map_sum, map_smul, timeOperator_basisVector]
   rw [hfun]
   simp_rw [smul_smul]
-  exact continuous_finset_sum F (fun n _ =>
+  exact continuous_finsetSum F (fun n _ =>
     (continuous_const.mul (continuous_timePhase n)).smul
       (continuous_const : Continuous (fun _ : ℝ => basisVector S n)))
 
