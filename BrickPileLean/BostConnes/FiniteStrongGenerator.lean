@@ -27,7 +27,8 @@ def finiteHamiltonianVelocity (S : Finset ℕ) (x : finiteHamiltonianDomain S)
 /-- Strong continuity applied to `H x` gives continuity of the velocity. -/
 theorem continuous_finiteHamiltonianVelocity (S : Finset ℕ)
     (x : finiteHamiltonianDomain S) : Continuous (finiteHamiltonianVelocity S x) := by
-  exact continuous_const.smul (continuous_timeOperator_apply S (finiteHamiltonian S x))
+  exact (continuous_const : Continuous (fun _ : ℝ => Complex.I)).smul
+    (continuous_timeOperator_apply S (finiteHamiltonian S x))
 
 /-- The derivative identity holds at each coordinate of a domain vector. -/
 theorem hasDerivAt_timeOperator_coordinate (S : Finset ℕ)
@@ -55,7 +56,8 @@ theorem integral_finiteHamiltonianVelocity (S : Finset ℕ)
   funext n
   let ev := lp.evalCLM ℂ (fun _ : finitePrimeSemigroup S => ℂ) 2 n
   have hv := continuous_finiteHamiltonianVelocity S x
-  have hint := hv.intervalIntegrable a b
+  have hint : IntervalIntegrable (finiteHamiltonianVelocity S x) volume a b :=
+    hv.intervalIntegrable a b
   have hcomm := ev.intervalIntegral_comp_comm hint
   change ev (∫ t in a..b, finiteHamiltonianVelocity S x t) = _
   rw [← hcomm]
