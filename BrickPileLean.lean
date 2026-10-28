@@ -38,3 +38,5 @@ import BrickPileLean.BostConnes.FiniteHamiltonianSelfAdjoint
 import BrickPileLean.BostConnes.FiniteHamiltonianTimeEvolution
 import BrickPileLean.BostConnes.FiniteStrongContinuity
 import BrickPileLean.BostConnes.FiniteStrongGenerator
+
+import BrickPileLean.BostConnes.FiniteStrongGeneratorDomain
