@@ -40,3 +40,4 @@ import BrickPileLean.BostConnes.FiniteStrongContinuity
 import BrickPileLean.BostConnes.FiniteStrongGenerator
 
 import BrickPileLean.BostConnes.FiniteStrongGeneratorDomain
+import BrickPileLean.BostConnes.FiniteHamiltonianCore
