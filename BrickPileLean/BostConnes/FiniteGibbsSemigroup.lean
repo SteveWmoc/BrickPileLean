@@ -38,6 +38,8 @@ theorem gibbsOperator_apply_coordinate {S : Finset ℕ} {β : ℝ}
       simpa only [basisVector, smul_eq_mul, mul_one] using
         (lp.single_smul (E := fun _ : finitePrimeSemigroup S => ℂ) 2 m z (1 : ℂ))
     rw [hs, map_smul, gibbsOperator_basisVector hS hβ]
+    change z * ((gibbsWeight β m : ℂ) * basisVector S m n) =
+      (gibbsWeight β n : ℂ) * (z * basisVector S m n)
     by_cases h : n = m
     · subst m
       simp [basisVector, mul_comm]
@@ -53,7 +55,7 @@ theorem gibbsOperator_apply_coordinate_energy {S : Finset ℕ} {β : ℝ}
   rw [gibbsOperator_apply_coordinate hS hβ, gibbsWeight_eq_exp_neg_energy hS]
 
 /-- The positive-temperature Gibbs operators satisfy the heat-semigroup
-composition law. No value at zero temperature parameter is asserted here. -/
+composition law. The parameter is strictly positive in this statement. -/
 theorem gibbsOperator_add {S : Finset ℕ} {β γ : ℝ}
     (hS : ∀ p ∈ S, Nat.Prime p) (hβ : 0 < β) (hγ : 0 < γ) :
     gibbsOperator S (β + γ) = (gibbsOperator S β).comp (gibbsOperator S γ) := by
