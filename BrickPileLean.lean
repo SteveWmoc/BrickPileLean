@@ -42,3 +42,4 @@ import BrickPileLean.BostConnes.FiniteStrongGenerator
 import BrickPileLean.BostConnes.FiniteStrongGeneratorDomain
 import BrickPileLean.BostConnes.FiniteHamiltonianCore
 import BrickPileLean.BostConnes.FiniteGibbsSemigroup
+import BrickPileLean.BostConnes.FiniteGibbsPositive
