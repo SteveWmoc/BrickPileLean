@@ -21,9 +21,12 @@ theorem gibbsOperator_symmetric {S : Finset ℕ} {β : ℝ}
     (hS : ∀ p ∈ S, Nat.Prime p) (hβ : 0 < β) :
     (gibbsOperator S β).IsSymmetric := by
   intro x y
+  change inner ℂ (gibbsOperator S β x) y = inner ℂ x (gibbsOperator S β y)
   rw [lp.inner_eq_tsum, lp.inner_eq_tsum]
   apply tsum_congr
   intro n
+  change inner ℂ (gibbsOperator S β x n) (y n) =
+    inner ℂ (x n) (gibbsOperator S β y n)
   rw [gibbsOperator_apply_coordinate hS hβ, gibbsOperator_apply_coordinate hS hβ]
   change inner ℂ ((gibbsWeight β n : ℂ) • x n) (y n) =
     inner ℂ (x n) ((gibbsWeight β n : ℂ) • y n)
@@ -55,7 +58,9 @@ theorem gibbsOperator_isPositive {S : Finset ℕ} {β : ℝ}
   refine ⟨gibbsOperator_symmetric hS hβ, ?_⟩
   intro x
   change 0 ≤ (inner ℂ (gibbsOperator S β x) x).re
-  rw [gibbsOperator_symmetric hS hβ x x]
+  have hs : inner ℂ (gibbsOperator S β x) x = inner ℂ x (gibbsOperator S β x) :=
+    gibbsOperator_symmetric hS hβ x x
+  rw [hs]
   rw [← (hasSum_gibbsOperator_quadratic hS hβ x).tsum_eq]
   exact tsum_nonneg (fun n => mul_nonneg (gibbsWeight_nonneg β n) (sq_nonneg _))
 
